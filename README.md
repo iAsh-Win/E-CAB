@@ -1,0 +1,1 @@
+E-Cab is a versatile and powerful open-source project that aims to make efficient Cab booking System. Whether you're a developer, researcher, or enthusiast, ECAB provides great features for your needs.
