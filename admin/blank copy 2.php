@@ -2,8 +2,9 @@
 // Your PHP code here
 session_start();
 if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($_SESSION["adminusername"])) {
-  
+
   ?>
+
   <!DOCTYPE html>
   <html lang="en">
 
@@ -11,7 +12,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>ADMIN DESHBOARD</title>
+    <title>Stellar Admin</title>
     <?php
     // Your PHP code here
     include("partials/_links.php");
@@ -20,43 +21,43 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
 
   <body>
     <div class="container-scroller">
-      <!-- partial:partials/_navbar.html -->
+      <!-- partial:../../partials/_navbar.html -->
       <?php
       // Your PHP code here
       include("partials/_navbar.php");
       ?>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
+        <!-- partial:../../partials/_sidebar.html -->
         <?php
         // Your PHP code here
         include("partials/_sidebar.php");
         ?>
         <!-- partial -->
         <div class="main-panel">
-
-          <!-- content-wrapper ends -->
-
-          <!-- partial:partials/_footer.html -->
-          <?php
-          // Your PHP code here
-          include("partials/_footer.php");
-          ?>
-          <!-- partial -->
+          <div class="content-wrapper">
+            
+            </div>
+            <!-- content-wrapper ends -->
+            <!-- partial:../../partials/_footer.html -->
+            <?php
+            // Your PHP code here
+            include("partials/_footer.php");
+            ?>
+            <!-- partial -->
+          </div>
+          <!-- main-panel ends -->
         </div>
-        <!-- main-panel ends -->
+        <!-- page-body-wrapper ends -->
       </div>
-      <!-- page-body-wrapper ends -->
-    </div>
-
-    <?php
-    // Your PHP code here
-  
-    include inc. '_scripts.php';
-
-    ?>
+      <?php
+      // Your PHP code here
+      include("partials/_scripts.php");
+      ?>
+  </body>
 
   </html>
+
 
   <?php
   // Your PHP code here

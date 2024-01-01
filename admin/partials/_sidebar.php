@@ -2,6 +2,7 @@
 // Your PHP code here
 
 if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($_SESSION["adminusername"])) {
+
   ?>
   <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
@@ -45,7 +46,8 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <li class="nav-item nav-category"><span class="nav-link">DRIVERS</span></li>
 
       <li class="nav-item">
-        <a class="nav-link" href="pages/icons/simple-line-icons.html">
+        <a class="nav-link" href="<?php echo BASE_URL ?>manage-driver.php">
+
           <span class="menu-title">Manage Drivers</span>
           <i class="icon-globe menu-icon"></i>
         </a>
@@ -76,9 +78,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
 
       <li class="nav-item pro-upgrade">
         <span class="nav-link">
-          <a class="btn btn-block px-0 btn-rounded btn-upgrade"
-            href="#" > <i
-              class="icon-badge mx-2"></i> Ashwin</a>
+          <a class="btn btn-block px-0 btn-rounded btn-upgrade" href="#"> <i class="icon-badge mx-2"></i> Ashwin</a>
         </span>
       </li>
     </ul>

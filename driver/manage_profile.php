@@ -265,6 +265,7 @@ if (
                       <input type="hidden" name="Manageprofile" value="driverprofile">
                       <button type="submit" class="btn btn-primary mb-2">Submit</button>
                     </form>
+                    <p>Last Updated:&nbsp;<?php echo $row["date_update"]; ?></p>
                   </div>
                 </div>
               </div>
