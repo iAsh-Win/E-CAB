@@ -14,7 +14,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Driver Login</title>
+    <title>Forgot Password</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">

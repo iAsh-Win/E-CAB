@@ -12,7 +12,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Stellar Admin</title>
+    <title>Manage Driver</title>
     <?php
     // Your PHP code here
     include("partials/_links.php");
@@ -83,7 +83,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                                     <td>' . $i . '</td>
                                     <td class="py-1"><img src="' . DriverPhotos . $row["photo"] . '" alt="image" /></td>
                                     <td>' . $row["firstname"] . " " . $row["lastname"] . '</td>
-                                    <td><a class="nav-link" href="driver-view.php?driver=' . $row["driverid"] . '">' . $row["email"] . '</a></td>
+                                    <td><a class="nav-link" href="driver-view?driver=' . $row["driverid"] . '">' . $row["email"] . '</a></td>
                                     <td>';
 
 
@@ -91,7 +91,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
 
                           echo '</td>
                           <td> <div class="form-check form-check-danger">';
-                          echo ($row["active"] == 0) ? '<button type="button" class="btn btn-danger btn-rounded  btn-sm"  onclick="deactivebtn1(\'' . $row["email"] . '\')">deActive</button>' : '<button type="button" class="btn btn-success btn-rounded  btn-sm"  onclick="activebtn1(\'' . $row["email"] . '\')">Active</button>';
+                          echo ($row["active"] == 0) ? '<button type="button" class="btn btn-info btn-rounded  btn-sm"  onclick="deactivebtn1(\'' . $row["email"] . '\')">deActive</button>' : '<button type="button" class="btn btn-success btn-rounded  btn-sm"  onclick="activebtn1(\'' . $row["email"] . '\')">Active</button>';
                           echo '</div>
                                     </td>';
 

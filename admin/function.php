@@ -38,11 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["formname"]) && $_POST[
 
         } elseif ($numRows > 1) {
             $er = "Multiple records found, something is not right";
-            header("Location:/E-cab/admin/login.php/?error=" . urlencode($er));
+            header("Location:/E-cab/admin/login/?error=" . urlencode($er));
 
         } else {
             $er = "No correct admin found, Please Review your credentials...";
-            header("Location:/E-cab/admin/login.php?error=" . urlencode($er));
+            header("Location:/E-cab/admin/login?error=" . urlencode($er));
 
         }
         exit;
@@ -89,10 +89,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofiledriver"])
     $row = mysqli_query($conn, $insertsql);
 
     if ($row) {
-        header("Location:" . BASE_URL . "driver-view.php?driver=$driverid");
+        header("Location:" . BASE_URL . "driver-view?driver=$driverid");
         exit;
     }
     exit;
+
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cateupdate"]) && $_POST["cateupdate"] == "yes") {
+    $cateid = sanitizeInput($_POST["cateid"]);
+    $basefare = sanitizeInput($_POST["basefare"]);
+
+
+
+    $error = "";
+    $insertsql = "UPDATE `cabcate` SET `basefare`='$basefare' WHERE `cateid`='$cateid'";
+    $row = mysqli_query($conn, $insertsql);
+
+    if ($row) {
+        header("Location:" . BASE_URL . "manage-cabs");
+        exit;
+    }
+    exit;
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cateadd"]) && $_POST["cateadd"] == "yes") {
+    $catename = sanitizeInput($_POST["catename"]);
+    $basefare = sanitizeInput($_POST["basefare"]);
+
+
+
+
+    $insertsql = "INSERT INTO `cabcate`(`catename`, `basefare`) VALUES ('$catename','$basefare')";
+    $row = mysqli_query($conn, $insertsql);
+
+    if ($row) {
+        header("Location:" . BASE_URL . "manage-cabs");
+        exit;
+    }
+    exit;
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["catedelete"]) && isset($_POST["categoryisdelete"]) && $_POST["catedelete"] == "yes") {
+    $cateid = sanitizeInput($_POST["cateid"]);
+
+    $insertsql = "DELETE FROM `cabcate` WHERE `cateid`=$cateid";
+    $row = mysqli_query($conn, $insertsql);
+    
 
 }
 ?>

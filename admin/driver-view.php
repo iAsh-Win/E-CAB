@@ -16,7 +16,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <!--  meta tags -->
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>Stellar Admin</title>
+      <title>View Driver</title>
       <?php
       // Your PHP code here
       include("partials/_links.php");
@@ -81,7 +81,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                 </h3>
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="manage-driver.php">Manage Driver</a></li>
+                    <li class="breadcrumb-item"><a href="manage-driver">Manage Driver</a></li>
                     <li class="breadcrumb-item active" aria-current="page">
                       <?php
                       echo $row["firstname"] . " " . $row["lastname"];

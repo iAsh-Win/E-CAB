@@ -172,7 +172,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofile"]) && $_
         $row = mysqli_query($conn, $insertsql);
 
         if ($row) {
-            header("Location:" . BASE_URL . "manage_profile.php?$Phone1");
+            header("Location:" . BASE_URL . "manage-profile?$Phone1");
             exit;
 
 
@@ -190,7 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofile"]) && $_
             $row = mysqli_query($conn, $insertsql);
 
             if ($row) {
-                header("Location:" . BASE_URL . "manage_profile.php");
+                header("Location:" . BASE_URL . "manage-profile");
                 exit;
 
             }
@@ -202,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofile"]) && $_
 
     if ($uploadOk != 1 && $error != "") {
         $er = urlencode($error);
-        header("Location:" . BASE_URL . "manage_profile.php?error=$er");
+        header("Location:" . BASE_URL . "manage-profile?error=$er");
         exit;
     }
 

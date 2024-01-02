@@ -24,11 +24,16 @@ if (
     <html lang="en">
 
     <head>
+      <title>Driver Deshboard</title>
       <?php
       include("partials/_links.php");
 
       ?>
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     </head>
+
+    <!-- <body onload="startUpdatingLocation()"> -->
 
     <body>
       <div class="container-scroller">
@@ -56,6 +61,46 @@ if (
                   <div class="card corona-gradient-card">
                     <div class="card-body py-0 px-0 px-sm-3">
                       <div class="row align-items-center">
+                        <!-- ___________________________________________________________________ -->
+
+
+                        <script>
+                          const driverid = <?php echo $row["driverid"]; ?>;
+                          function startUpdatingLocation() {
+                            // Update the location every 5 seconds (adjust as needed)
+
+                            setInterval(updateLocation, 5000);
+                          }
+
+                          function updateLocation() {
+
+                            navigator.geolocation.getCurrentPosition(
+                              position => {
+                                const { latitude, longitude } = position.coords;
+                                sendLocationToServer(driverid, latitude, longitude);
+                              },
+                              error => {
+                                console.error('Error getting location:', error);
+                              },
+                              { enableHighAccuracy: true }
+                            );
+                          }
+
+                          function sendLocationToServer(driverid, latitude, longitude) {
+                            $.ajax({
+                              url: 'update-driver-location.php',
+                              type: 'POST',
+                              contentType: 'application/json',
+                              data: JSON.stringify({ driverid, latitude, longitude }),
+                              success: function (data) {
+                                // Handle the data (if needed)
+                                console.log(data);
+                              },
+                            });
+                          }
+
+                        </script>
+                        <!-- ___________________________________________________________________ -->
                         <div class="col-4 col-sm-3 col-xl-2">
                           <img src="assets/images/dashboard/Group126@2x.png" class="gradient-corona-img img-fluid" alt="">
                         </div>

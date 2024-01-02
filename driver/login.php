@@ -94,7 +94,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                       <label class="form-check-label">
                         <input type="checkbox" name="forgot" class="form-check-input"> Remember me </label>
                     </div>
-                    <a href="forgot_password.php" class="forgot-pass">Forgot password</a>
+                    <a href="forgot-password" class="forgot-pass">Forgot password</a>
                   </div>
                   <div class="text-center">
                     <input type="hidden" name="driverlogin" value="yes">

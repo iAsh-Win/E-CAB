@@ -46,7 +46,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <li class="nav-item nav-category"><span class="nav-link">DRIVERS</span></li>
 
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo BASE_URL ?>manage-driver.php">
+        <a class="nav-link" href="<?php echo BASE_URL ?>manage-driver">
 
           <span class="menu-title">Manage Drivers</span>
           <i class="icon-globe menu-icon"></i>
@@ -64,12 +64,12 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <li class="nav-item nav-category"><span class="nav-link">CABS</span></li>
       <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-          <span class="menu-title">All Cabs</span>
+          <span class="menu-title">Manage Cabs</span>
           <i class="icon-layers menu-icon"></i>
         </a>
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="/E-cab/admin">BMW</a></li>
+            <li class="nav-item"> <a class="nav-link" href="manage-cabs">Manage Cabs</a></li>
             <li class="nav-item"> <a class="nav-link" href="/E-cab/admin">MERCIDISC</a></li>
           </ul>
         </div>

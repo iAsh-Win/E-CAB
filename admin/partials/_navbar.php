@@ -24,7 +24,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
             echo $_SESSION["adminusername"];
             ?>
           </span>
-          <a class="m-2 btn btn-dark btn-rounded btn-sm" href="/E-cab/admin/logout.php">Log-out </a>
+          <a class="m-2 btn btn-dark btn-rounded btn-sm" href="/E-cab/admin/logout">Log-out </a>
 
         </li>
       </ul>

@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /E-cab/
+
+    # Exclude real directories and files from rewrite
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+
+    # Rewrite for subdirectories
+    RewriteRule ^([^/]+)/?$ $1.php [L]
+
+    # Rewrite for the root directory
+    RewriteRule ^([^/]+)/?$ /your-project/$1.php [L]
+</IfModule>
+
