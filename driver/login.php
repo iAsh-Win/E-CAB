@@ -106,7 +106,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                     <button class="btn btn-google col">
                       <i class="mdi mdi-google-plus"></i> Google plus </button>
                   </div>
-                  <p class="sign-up">Don't have an Account?<a href="signup.php"> Sign Up</a></p>
+                  <p class="sign-up">Don't have an Account?<a href="signup"> Sign Up</a></p>
                 </form>
               </div>
             </div>

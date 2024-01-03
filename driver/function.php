@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["form_name"]) && $_POST
 
     if ($uploadOk != 1 && $error != "") {
         $er = urlencode($error);
-        header("Location:" . BASE_URL . "signup.php?error=$er");
+        header("Location:" . BASE_URL . "signup?error=$er");
         exit;
 
     }
@@ -233,18 +233,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["key1"]) && isset($_POS
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["param1"]) && isset($_POST["param2"]) && $_POST["param3"] == "change") {
     $email = sanitizeInput($_POST["param1"]);
     $pass = sanitizeInput($_POST["param2"]);
-  
+
 
     $insertsql = "UPDATE `driver` SET `password`='$pass' WHERE `email`='$email'";
-    
+
     $row = mysqli_query($conn, $insertsql);
-    
+
     if ($row) {
         echo "changed";
     } else {
         echo "not changed: ";
     }
-    
+
 
 }
 ?>

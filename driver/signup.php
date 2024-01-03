@@ -79,30 +79,35 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                     <div class="content-wrapper full-page-wrapper  auth login-bg">
                         <h3 class="text-center mb-4">Regiter yourself to work with us!</h3>
                         <div class="card col-lg-11 mx-auto my-auto p-3">
-
-
                             <form class="form-sample" action=function.php method="post" enctype="multipart/form-data">
                                 <p class="card-description"> Driver info </p>
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">First Name</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="firstname" class="form-control text-white"
-                                                    required />
+                                                <input type="text" id="firstname" name="firstname"
+                                                    class="form-control text-white" required />
+                                                <span id="firstnameError" style="color: red; display: none;">Only characters
+                                                    allowed</span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Last Name</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="lastname" class="form-control text-white"
-                                                    required />
+                                                <input type="text" id="lastname" name="lastname"
+                                                    class="form-control text-white" required />
+                                                <span id="lastnameError" style="color: red; display: none;">Only characters
+                                                    allowed</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
@@ -115,6 +120,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Email</label>
@@ -124,12 +130,15 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Phone</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="phone" class="form-control text-white" required />
+                                                <input type="text" name="phone" class="form-control text-white"
+                                                    pattern="[0-9]{1,10}"
+                                                    title="Please enter only numbers (up to 10 digits)" required />
                                             </div>
                                         </div>
                                     </div>
@@ -159,19 +168,24 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Car-No</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="carno" class="form-control text-white" required />
+                                                <input type="text" name="carno" class="form-control text-white" required
+                                                    pattern="^[A-Z]{2}\d{2}[A-Z]{2}\d{4}$"
+                                                    title="Format: Add Such Like format GJ01FR1234." />
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Driving Licence No</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="licence" class="form-control text-white"
-                                                    required />
+                                                <input type="text" name="licence" class="form-control text-white" required
+                                                    pattern="^[A-Z]{2}\d{13}$"
+                                                    title="Format: Add Such Like format GJ1234567891234." />
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                                 <p class="card-description"> Address </p>
                                 <div class="row">
@@ -179,7 +193,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">City</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="city" class="form-control text-white" />
+                                                <input type="text" name="city" class="form-control text-white" required />
                                             </div>
                                         </div>
                                     </div>
@@ -197,10 +211,12 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Pincode</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="pin" class="form-control text-white" required />
+                                                <input type="text" name="pin" class="form-control text-white" required
+                                                    pattern="[0-9]{6}" title="Please enter a 6-digit pincode" />
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Profile Picture</label>
@@ -226,6 +242,8 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                             <label class="col-sm-3 col-form-label">Set your password</label>
                                             <div class="col-sm-9">
                                                 <input type="password" name="password" class="form-control text-white"
+                                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,}"
+                                                    title="Password must contain at least one uppercase letter, one lowercase letter, one special character, and be at least 8 characters long"
                                                     required />
                                             </div>
                                         </div>
@@ -234,7 +252,9 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Verify your Password</label>
                                             <div class="col-sm-9">
-                                                <input type="password" class="form-control text-white" required />
+                                                <input type="password" id="verifyPassword" class="form-control text-white"
+                                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,}"
+                                                    title="Password must match the previous entry" required />
                                                 <input type="hidden" name="form_name" value="driverreg">
                                             </div>
                                         </div>
@@ -276,6 +296,61 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                 });
             });
         </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const firstNameInput = document.getElementById('firstname');
+
+                firstNameInput.addEventListener('input', function () {
+                    const firstName = firstNameInput.value;
+                    const regex = /^[a-zA-Z]+$/; // Regular expression to allow only characters
+
+                    if (!regex.test(firstName)) {
+                        document.getElementById('firstnameError').style.display = 'inline'; // Show error message
+                        firstNameInput.setCustomValidity('Only characters allowed'); // Set custom validation message
+                    } else {
+                        document.getElementById('firstnameError').style.display = 'none'; // Hide error message
+                        firstNameInput.setCustomValidity(''); // Reset custom validation message
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const lastNameInput = document.getElementById('lastname');
+
+                lastNameInput.addEventListener('input', function () {
+                    const lastName = lastNameInput.value;
+                    const regex = /^[a-zA-Z]+$/; // Regular expression to allow only characters
+
+                    if (!regex.test(lastName)) {
+                        document.getElementById('lastnameError').style.display = 'inline'; // Show error message
+                        lastNameInput.setCustomValidity('Only characters allowed'); // Set custom validation message
+                    } else {
+                        document.getElementById('lastnameError').style.display = 'none'; // Hide error message
+                        lastNameInput.setCustomValidity(''); // Reset custom validation message
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            window.onload = function () {
+                var verifyPasswordInput = document.getElementById('verifyPassword');
+
+                verifyPasswordInput.addEventListener('input', function () {
+                    var setPassword = document.querySelector('input[name="password"]');
+                    if (setPassword.value !== verifyPasswordInput.value) {
+                        verifyPasswordInput.setCustomValidity("Passwords do not match");
+                    } else {
+                        verifyPasswordInput.setCustomValidity('');
+                    }
+                });
+            };
+        </script>
+
+
     </body>
 
     <script>

@@ -100,19 +100,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofiledriver"])
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cateupdate"]) && $_POST["cateupdate"] == "yes") {
     $cateid = sanitizeInput($_POST["cateid"]);
     $basefare = sanitizeInput($_POST["basefare"]);
+    $date = date("Y-m-d");
 
+   
+    $updatesql = "UPDATE `cabcate` SET `basefare`='$basefare', `date-update`='$date' WHERE `cateid`='$cateid'";
+    $result = mysqli_query($conn, $updatesql);
 
-
-    $error = "";
-    $insertsql = "UPDATE `cabcate` SET `basefare`='$basefare' WHERE `cateid`='$cateid'";
-    $row = mysqli_query($conn, $insertsql);
-
-    if ($row) {
+    if ($result) {
         header("Location:" . BASE_URL . "manage-cabs");
         exit;
     }
     exit;
 }
+
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cateadd"]) && $_POST["cateadd"] == "yes") {
