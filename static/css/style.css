@@ -1,0 +1,341 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #000000;
+}
+
+a {
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+nav {
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgb(0, 0, 0);
+  justify-content: space-between;
+  padding: 20px 50px;
+}
+
+.nav-items {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img {
+  width: 150px;
+}
+
+
+
+
+.btns,
+.start {
+  text-decoration: none;
+  display: inline-flex;
+  height: 40px;
+  padding: 0px 12px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1000px;
+
+  margin: 0px 5px;
+  color: #ffffff;
+  /* font-family: Montserrat; */
+  font-family: "Poppins";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  transition: all 0.2s ease-in;
+}
+
+.btns:hover:not(.sign-btn) {
+  background-color: rgb(58, 56, 56);
+}
+
+.sign-btn,
+.start {
+  color: #000;
+  background: #FFF;
+  transition: all 0.2s ease-in;
+}
+
+.sign-btn:hover,
+.start:hover {
+
+  background: #e4e4e4;
+
+}
+
+.my-btn {
+  margin-left: 30px;
+}
+
+
+/* dropboc  */
+.dropbox {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15px 5px;
+  gap: 10px;
+  width: 170px;
+  background: rgb(0, 0, 0);
+  top: 76px;
+
+  border: 0.1px solid #686565;
+  border-radius: 15px;
+  z-index: 100;
+  /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
+  box-shadow: 3px 5px 50px -11px #313131; */
+  visibility: hidden;
+
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+
+}
+
+body:has(.sign-btn:hover) .d1,
+.d1:hover {
+
+  visibility: visible;
+  opacity: 1;
+}
+
+body:has(.login-btn:hover) .d2,
+.d2:hover {
+
+  visibility: visible;
+  opacity: 1;
+}
+
+.dropbox a {
+  text-decoration: none;
+  display: inline-flex;
+  height: 40px;
+  padding: 0px 12px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1000px;
+
+  margin: 0px 5px;
+  color: #ffffff;
+
+  /* font-family: Montserrat; */
+  font-family: "Poppins";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  transition: all 0.2s ease-in;
+}
+
+.dropbox a:hover {
+  background-color: rgb(58, 56, 56);
+}
+
+/* main section is started--------------------------------------- */
+/* section1 */
+@keyframes fadeIn {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+section {
+  /* width: 100%; */
+  padding: 0px 50px;
+  opacity: 1;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px 0px;
+}
+
+.request {
+  color: #FFF;
+  font-family: Poppins;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+
+.ride-text {
+  background: linear-gradient(115deg, #135aff, #ff0072);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-family: Poppins;
+  font-size: 90px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.phone-img img {
+  width: 234px;
+  height: 234px;
+
+}
+
+/* second div in section 1 */
+.map-img img {
+  width: 300px;
+  height: 300px;
+}
+
+.mini-box {
+  max-width: 642px;
+}
+
+.mini {
+  color: #FFF;
+  font-family: "Poppins";
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 200;
+  line-height: normal;
+  margin-bottom: 20px;
+}
+
+.text {
+  color: #FFF;
+  /* font-family: Josefin Sans; */
+  font-family: "Montserrat";
+  font-size: 46px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 15px;
+
+
+}
+
+.copyright {
+  color: #ffffff;
+  /* font-family: Montserrat; */
+  font-family: "Poppins";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+
+}
+
+/* main section is ended--------------------------------------- */
+@media screen and (max-width: 750px) {
+  .my-btn {
+    display: none;
+  }
+
+  nav {
+    padding: 10px 20px
+  }
+
+  section {
+    padding: 0px 20px;
+  }
+
+  /* .display{
+    flex-direction: column; 
+    gap: 29px;
+   
+    margin-bottom: 35px;
+  }
+  .ride-text{
+    font-size: 55px;
+  }
+  .request{
+    font-size: 35px;
+  }
+  .text{
+    font-size: 30px;
+  }
+  .mini{
+    font-size: 14px;
+  } */
+
+
+  .ride-text {
+    background: linear-gradient(115deg, #255fe7, #e767a0);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-family: Poppins;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
+
+  .request {
+    color: #FFF;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+  }
+
+  .phone-img img {
+    width: 160px;
+    height: 160px;
+  }
+
+  .map-img img {
+    width: 300px;
+    height: 300px;
+  }
+
+  .text {
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  .mini {
+    font-size: 14px;
+  }
+
+  .mini-box {
+    max-width: 320px;
+  }
+
+
+
+  .col {
+    margin-top: 5rem;
+    flex-direction: column;
+    gap: 5rem;
+  }
+
+
+}

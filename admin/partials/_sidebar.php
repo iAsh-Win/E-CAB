@@ -78,7 +78,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
 
       <li class="nav-item pro-upgrade">
         <span class="nav-link">
-          <a class="btn btn-block px-0 btn-rounded btn-upgrade" href="#"> <i class="icon-badge mx-2"></i> Ashwin</a>
+          <a class="btn btn-block px-0 btn-rounded btn-upgrade" href="/E-cab/admin/logout"> <i class="icon-badge mx-2"></i> Ashwin</a>
         </span>
       </li>
     </ul>

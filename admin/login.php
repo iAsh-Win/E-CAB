@@ -22,7 +22,7 @@ if (!isset($_SESSION["adminlogin"]) && !isset($_SESSION["adminusername"])) {
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" <!-- End layout styles -->
-    <link rel="shortcut icon" href="../../images/favicon.png" />
+    <link rel="shortcut icon" href="../static/pictures/favicon.png" />
   </head>
 
   <body>

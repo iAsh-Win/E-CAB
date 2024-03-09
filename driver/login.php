@@ -26,7 +26,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
     <!-- Layout styles -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <link rel="shortcut icon" href="../static/pictures/favicon.png" />
     <style>
       /* Add or modify styles as needed */
       #proBanner {
@@ -46,6 +46,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
   </head>
 
   <body>
+  
     <div class="container-scroller">
       <?php
       if ($er) {

@@ -1,0 +1,20 @@
+{
+    "name": "ashwi/e-cab",
+    "autoload": {
+        "psr-4": {
+            "Ashwi\\ECab\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "iAsh-Win",
+            "email": "ashwinsolanki9898@gmail.com"
+        }
+    ],
+    "require": {
+        "google/apiclient": "*",
+        "razorpay/razorpay": "^2.9"
+       
+    }
+    
+}

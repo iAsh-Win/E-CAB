@@ -61,7 +61,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
   <?php
   // Your PHP code here
 } else {
-  header("Location:/E-cab/admin/login.php");
+  header("Location:/E-cab/admin/login");
 
 }
 ?>

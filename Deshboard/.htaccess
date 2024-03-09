@@ -1,13 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /E-cab/
+    RewriteBase /E-cab/Deshboard/
 
     # Exclude real directories and files from rewrite
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME}.php -f
 
-    # Rewrite for subdirectories
+    # Rewrite for the driver subdirectory
     RewriteRule ^([^/]+)/?$ $1.php [L]
-
 </IfModule>
 

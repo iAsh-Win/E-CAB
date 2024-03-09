@@ -33,9 +33,9 @@ if (
 
     </head>
 
-    <!-- <body onload="startUpdatingLocation()"> -->
+    <body onload="startUpdatingLocation()">
 
-    <body>
+      <!-- <body> -->
       <div class="container-scroller">
 
         <!-- partial:partials/_sidebar.html -->
@@ -785,10 +785,10 @@ if (
     </html>
     <?php
   } else {
-    header("location:" . BASE_URL . "login.php");
+    header("location:" . BASE_URL . "login");
   }
 } else {
-  header("location:" . BASE_URL . "login.php");
+  header("location:" . BASE_URL . "login");
 }
 exit;
 ?>
