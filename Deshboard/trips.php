@@ -19,13 +19,13 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
         // Fetch data as an associative array
         $row = mysqli_fetch_assoc($result);
-        $rides = "SELECT * FROM ride WHERE uid='" . $row['id'] . "'";
+        $rides = "SELECT * FROM ride WHERE uid='" . $row['id'] . "' ORDER BY book_time ASC";
         $result2 = mysqli_query($conn, $rides);
         // Handle the data (you can modify this part based on your needs)
 
-        echo '<pre>';
-        print_r($row);
-        echo '</pre>';
+        // echo '<pre>';
+        // print_r($row);
+        // echo '</pre>';
 
 
 
@@ -108,6 +108,13 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 .trips span .main-btn {
                     font-size: 10px;
                 }
+
+                .dropbox {}
+
+
+                .taskDiv {
+                    grid-row: 1;
+                }
             }
 
 
@@ -126,12 +133,13 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 border-radius: 15px;
 
                 /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                          box-shadow: 3px 5px 50px -11px #313131; */
+                                                                                                                                  box-shadow: 3px 5px 50px -11px #313131; */
                 visibility: hidden;
-                transform: translateX(-20px);
+                transform: translateX(-65px);
                 opacity: 0;
                 transition: all 0.5s ease-in-out;
                 z-index: 10000000000000000;
+
 
             }
 
@@ -168,22 +176,39 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
             .dropbox a:hover {
                 background-color: rgb(226, 225, 247);
             }
+
+            .mydiv {
+
+                max-height: calc(100vh - 40vh);
+                overflow-y: auto;
+                width: max-content;
+            }
+
+            .tripsdiv {
+                display: flex;
+                flex-direction: column;
+                margin: 0px auto;
+            }
+
+            /* .trips {
+                                                        width: 40vw;
+                                                    } */
         </style>
 
         <body>
             <nav>
-                <div class="logo">
-                    <img src="static/pictures/logo2.png" class="logo-img" alt="logo">
+                <div class="logo"><a href="./">
+                        <img src="static/pictures/logo2.png" class="logo-img" alt="logo"></a>
                 </div>
-                <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div>
+                <!-- <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div> -->
                 <div class="user-div">
 
-                    <div class="btns"><a href="trips.html" class="main-btn Mytrips">My Trips</a></div>
+                    <!-- <div class="btns"><a href="trips.html" class="main-btn Mytrips">My Trips</a></div> -->
 
-                    <img src="static/pictures/favicon.png" class="user-image" alt="">
+                    <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="">
                     <div class="dropbox">
                         <a href="#">Manage Profile</a>
-                        <a href="#">Log out</a>
+                        <a href="log-out">Log out</a>
                     </div>
 
                 </div>
@@ -191,31 +216,34 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
             <main>
                 <div class="display" style="grid-template-columns: 1fr; grid-template-rows: 1fr;">
                     <div class="taskDiv">
-                        <div class>
+                        <div class="tripsdiv">
                             <h1 class="title" style="margin: 30px 0px;">Recent Trips</h1>
-                            <?php
-                            $count = 1;
-                            while ($ride = mysqli_fetch_assoc($result2)) {
-                                $bookings = mysqli_query($conn, "SELECT * FROM bookings WHERE rid='" . $ride['rid'] . "'");
+                            <div class="mydiv">
+                                <?php
+                                $count = 1;
+                                while ($ride = mysqli_fetch_assoc($result2)) {
+                                    $bookings = mysqli_query($conn, "SELECT * FROM bookings WHERE rid='" . $ride['rid'] . "'");
 
-                                if ($bookings) {
-                                    $bookingdata = mysqli_fetch_assoc($bookings);
+                                    if ($bookings) {
+                                        $bookingdata = mysqli_fetch_assoc($bookings);
 
-                                    if ($bookingdata) {
+                                        if ($bookingdata) {
 
-                                        echo '<div class="bookCtn trips">
-                                                    <span>' . $count . '</span>
-                                                    <span>' . $ride['booking_time'] . '</span>
-                                                    <span>' . $ride['source'] . '</span>
-                                                    <span>' . $ride['destination'] . '</span>
-                                                    <span style="color: green;">' . $bookingdata['status'] . '</span>
-                                                    <span><a href="trips-details?Booking=' . $bookingdata['bookid'] . '&Ride=' . $ride['rid'] . '&uid=' . $row['id'] . '" class="main-btn">View Details</a></span>
-                                                </div>';
-                                        $count++;
+                                            echo '<div class="bookCtn trips">
+                                            <span>' . $count . '</span>
+                                            <span>' . $ride['booking_time'] . '</span>
+                                            <span>' . $ride['source'] . '</span>
+                                            <span>' . $ride['destination'] . '</span>
+                                            <span style="color: ' . (($bookingdata['status'] == 'Confirmed') ? 'green' : 'red') . '">' . $bookingdata['status'] . '</span>
+                                            <span><a href="trips-details?Booking=' . $bookingdata['bookid'] . '&Ride=' . $ride['rid'] . '&uid=' . $row['id'] . '" class="main-btn">View Details</a></span>
+                                        </div>';
+
+                                            $count++;
+                                        }
                                     }
                                 }
-                            }
-                            ?>
+                                ?>
+                            </div>
 
                             <!-- <div class="bookCtn trips">
                                 <span>1</span>

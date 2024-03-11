@@ -36,8 +36,7 @@ $data = json_decode($json_data, true);
 
 
 
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && hasAllValues($data)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($data['paymenttype']) && hasAllValues($data)) {
 
     // echo json_encode('data');
     if ($data['paymenttype'] == 'cash') {
@@ -116,10 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && hasAllValues($data)) {
                 $lastInsertedId = $conn->insert_id;
                 $sql2 = "INSERT INTO `bookings`(`rid`, `payment_type`, `status`) VALUES ('$lastInsertedId','cash','Confirmed')";
                 if ($conn->query($sql2) === TRUE) {
-                    echo "Record inserted successfully";
+                    echo json_encode('trips');
                 }
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
             }
 
             // Explicitly close the database connection
@@ -136,6 +133,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && hasAllValues($data)) {
     }
 
 }
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($data['data']) && $data['data'] == 'fetch_price') {
+    $pricesql = "SELECT * FROM `cabcate`";
+    $priceresult = $conn->query($pricesql);
+    $prices = mysqli_fetch_all($priceresult);
+    echo json_encode($prices);
+}
+
+
 if (isset($_SESSION['code'])) {
     if ($_SESSION['code'] == 'PAYMENT_SUCCESS') {
 
@@ -256,7 +262,19 @@ if (isset($_SESSION['code'])) {
 
     unset($_SESSION['code']);
     unset($_SESSION['BookingObj']);
-    // header('location: index');
+    header('location: trips');
+
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["cancelBooking"]) && $_GET["cancelBooking"] != '') {
+
+    $cancelBookingId = mysqli_real_escape_string($conn, $_GET['cancelBooking']);
+    $sql2 = "UPDATE `bookings` SET `status` = 'Canceled' WHERE bookid = '$cancelBookingId'";
+    $conn->query($sql2);
+
+    header('location: trips');
+
 
 
 }

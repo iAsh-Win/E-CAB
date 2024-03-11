@@ -75,7 +75,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 </div>
                 <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div>
                 <div class="user-div">
-                    <div class="btns"><a href="trips.html" class="main-btn Mytrips">My Trips</a></div>
+                    <div class="btns"><a href="trips" class="main-btn Mytrips">My Trips</a></div>
                     <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="userimage">
 
 
@@ -856,27 +856,55 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
                 function setPrices() {
                     locationsObj["totaldistance"] = totaldistance;
-                    let fare1 = 100;
-                    let fare2 = 200;
-                    let fare3 = 500;
+                    // let fare1 = 100;
+                    // let fare2 = 200;
+                    // let fare3 = 500;
+                    var comPrice;
+                    var famPrice;
+                    var prePrice;
+                    fetch('function.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ data: "fetch_price" })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            let comPrice, famPrice, prePrice;
 
-                    // Calculate prices without rounding
-                    let compact = fare1 * totaldistance;
-                    let family = fare2 * totaldistance;
-                    let premium = fare3 * totaldistance;
+                            data.forEach(element => {
 
-                    // Round up using Math.ceil()
-                    cabprices["compact"] = Math.ceil(compact);
-                    cabprices["family"] = Math.ceil(family);
-                    cabprices["premium"] = Math.ceil(premium);
+                                if (element[1] == 'Compact') {
+                                    comPrice = element[3];
+                                } else if (element[1] == 'Family') {
+                                    famPrice = element[3];
+                                } else {
+                                    prePrice = element[3];
+                                }
+                            });
 
-                    // Display prices rounded up
-                    document.getElementById("cprice").innerText = "₹ " + cabprices["compact"];
-                    document.getElementById("fprice").innerText = "₹ " + cabprices["family"];
-                    document.getElementById("pprice").innerText = "₹ " + cabprices["premium"];
+                            let compact = comPrice * totaldistance;
+                            let family = famPrice * totaldistance;
+                            let premium = prePrice * totaldistance;
 
-                    document.getElementById("div1").style.display = "none";
-                    document.getElementById("div2").style.display = "flex";
+                            // Round up using Math.ceil()
+                            cabprices["compact"] = Math.ceil(compact);
+                            cabprices["family"] = Math.ceil(family);
+                            cabprices["premium"] = Math.ceil(premium);
+
+                            // Display prices rounded up
+                            document.getElementById("cprice").innerText = "₹ " + cabprices["compact"];
+                            document.getElementById("fprice").innerText = "₹ " + cabprices["family"];
+                            document.getElementById("pprice").innerText = "₹ " + cabprices["premium"];
+
+                            document.getElementById("div1").style.display = "none";
+                            document.getElementById("div2").style.display = "flex";
+                        })
+                        .catch(error => console.log(error));
+
+
+
                 }
 
 
@@ -959,9 +987,11 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                             },
                             body: JSON.stringify(locationsObj)
                         })
-                            .then(response => response.text())
+                            .then(response => response.json())
                             .then(data => {
-                                console.log(data);
+                                if (data == "trips") {
+                                    window.location.href = data;
+                                }
                             })
                     }
                     else {

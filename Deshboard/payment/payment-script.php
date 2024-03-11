@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $message = ['error' => true, 'message' => 'Please provide a valid email'];
         } else {
-            if (!ctype_digit($amount)) {
+            if (!ctype_digit(strval($amount))) {
                 $message = ['error' => true, 'message' => 'Amount should contain digits only'];
             } else {
                 $amount = (int) $amount; // Convert to an integer

@@ -247,4 +247,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["param1"]) && isset($_P
 
 
 }
+header('Content-Type: application/json');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "AcceptBook") {
+
+    $bookid = mysqli_real_escape_string($conn, $_POST["bookid"]);
+    $driverid = mysqli_real_escape_string($conn, $_POST["driverid"]);
+
+    $ride = "INSERT INTO `driverrequest`(`driverID`, `bookid`, `status`) VALUES ('$driverid', '$bookid', 'Accepted')";
+    $rides = mysqli_query($conn, $ride);
+    $lastId = mysqli_insert_id($conn);
+    $query = "UPDATE bookings SET reqID='$lastId' WHERE bookid='$bookid'";
+
+    $bookings = mysqli_query($conn, $query);
+    // Check if both queries were successful
+    if ($bookings && $rides) {
+        echo json_encode(["status" => "done", "reqID" => $lastId]);
+
+    } else {
+        echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "PickBook") {
+
+    $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
+    $ride = "UPDATE driverrequest SET status='Pickup' WHERE reqID='$reqID'";
+    $rides = mysqli_query($conn, $ride);
+
+    // Check if both queries were successful
+    if ($rides) {
+        echo json_encode(["status" => "done"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "CompleteRide") {
+
+    $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
+    $ride = "UPDATE driverrequest SET status='Complete' WHERE reqID='$reqID'";
+    $rides = mysqli_query($conn, $ride);
+
+    // Check if both queries were successful
+    if ($rides) {
+        echo json_encode(["status" => "done"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "DeclineRide") {
+
+    $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
+    $ride = "UPDATE driverrequest SET status='Decline' WHERE reqID='$reqID'";
+    $rides = mysqli_query($conn, $ride);
+
+    // Check if both queries were successful
+    if ($rides) {
+        echo json_encode(["status" => "done"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
+    }
+}
+
+
 ?>
