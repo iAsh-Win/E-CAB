@@ -1,6 +1,6 @@
 <?php
 
-include("path.php");
+include ("path.php");
 include inc . 'db.php';
 
 function check($i)
@@ -23,7 +23,7 @@ function sanitizeInput($input)
     return mysqli_real_escape_string($conn, $input);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["form_name"]) && $_POST["form_name"] == "driverreg") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["form_name"]) && $_POST["form_name"] == "driverreg") {
     // Function to sanitize user input
 
 
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["form_name"]) && $_POST
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["driverlogin"]) && $_POST["driverlogin"] == "yes") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["driverlogin"]) && $_POST["driverlogin"] == "yes") {
     $email = sanitizeInput($_POST["email"]);
     $password = sanitizeInput($_POST["pass"]);
     $searchsql = "SELECT * FROM driver WHERE email='$email' AND password='$password'";
@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["driverlogin"]) && $_PO
 
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofile"]) && $_POST["Manageprofile"] == "driverprofile") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["Manageprofile"]) && $_POST["Manageprofile"] == "driverprofile") {
 
 
 
@@ -210,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Manageprofile"]) && $_
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["key1"]) && isset($_POST["key2"]) && $_POST["key2"] == "div1") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["key1"]) && isset ($_POST["key2"]) && $_POST["key2"] == "div1") {
 
     $email = sanitizeInput($_POST["key1"]);
     $searchsql = "SELECT * FROM driver WHERE email='$email'";
@@ -230,7 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["key1"]) && isset($_POS
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["param1"]) && isset($_POST["param2"]) && $_POST["param3"] == "change") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["param1"]) && isset ($_POST["param2"]) && $_POST["param3"] == "change") {
     $email = sanitizeInput($_POST["param1"]);
     $pass = sanitizeInput($_POST["param2"]);
 
@@ -249,27 +249,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["param1"]) && isset($_P
 }
 header('Content-Type: application/json');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "AcceptBook") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["operation"]) && $_POST["operation"] == "AcceptBook" && isset ($_POST["bookid"]) && isset ($_POST["driverid"]) && isset ($_POST["reqID"])) {
 
     $bookid = mysqli_real_escape_string($conn, $_POST["bookid"]);
     $driverid = mysqli_real_escape_string($conn, $_POST["driverid"]);
+    $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
 
-    $ride = "INSERT INTO `driverrequest`(`driverID`, `bookid`, `status`) VALUES ('$driverid', '$bookid', 'Accepted')";
-    $rides = mysqli_query($conn, $ride);
-    $lastId = mysqli_insert_id($conn);
-    $query = "UPDATE bookings SET reqID='$lastId' WHERE bookid='$bookid'";
+    $rideUpdateQuery = "UPDATE driverrequest SET status='Accepted' WHERE reqID='$reqID'";
+    $bookingUpdateQuery = "UPDATE bookings SET reqID='$reqID', status='Confirmed' WHERE bookid='$bookid'";
 
-    $bookings = mysqli_query($conn, $query);
+    $rides = mysqli_query($conn, $rideUpdateQuery);
+    $bookings = mysqli_query($conn, $bookingUpdateQuery);
+
     // Check if both queries were successful
     if ($bookings && $rides) {
-        echo json_encode(["status" => "done", "reqID" => $lastId]);
-
+        echo json_encode(["status" => "done", "reqID" => $reqID]);
     } else {
         echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "PickBook") {
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["operation"]) && isset ($_POST["bookid"]) && $_POST["operation"] == "PickBook") {
 
     $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
     $ride = "UPDATE driverrequest SET status='Pickup' WHERE reqID='$reqID'";
@@ -283,11 +284,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset(
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "CompleteRide") {
-
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["operation"]) && isset ($_POST["bookid"]) && $_POST["operation"] == "CompleteRide") {
+    $bookid = mysqli_real_escape_string($conn, $_POST["bookid"]);
     $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
     $ride = "UPDATE driverrequest SET status='Complete' WHERE reqID='$reqID'";
     $rides = mysqli_query($conn, $ride);
+
+    $deletereq = "DELETE FROM driverrequest WHERE reqID!='$reqID' AND bookid='$bookid'";
+    $delete = mysqli_query($conn, $deletereq);
+
+    $bookings = "UPDATE bookings SET status='Completed' WHERE bookid='$bookid'";
+    $bk = mysqli_query($conn, $bookings);
 
     // Check if both queries were successful
     if ($rides) {
@@ -297,7 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset(
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["operation"]) && isset($_POST["bookid"]) && $_POST["operation"] == "DeclineRide") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset ($_POST["operation"]) && isset ($_POST["bookid"]) && $_POST["operation"] == "DeclineRide") {
 
     $reqID = mysqli_real_escape_string($conn, $_POST["reqID"]);
     $ride = "UPDATE driverrequest SET status='Decline' WHERE reqID='$reqID'";

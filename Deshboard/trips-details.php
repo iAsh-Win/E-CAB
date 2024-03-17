@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
-    require("../mainDB.php");
+if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+    require ("../mainDB.php");
     try {
         $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
         $query = "SELECT * FROM users WHERE emailID='$email'";
@@ -15,7 +15,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
         // Fetch data as an associative array
         $row = mysqli_fetch_assoc($result);
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["Booking"]) && $_GET["Booking"] != '' && isset($_GET['Ride']) && $_GET['Ride'] != '' && isset($_GET['uid']) && $_GET['uid'] != '') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset ($_GET["Booking"]) && $_GET["Booking"] != '' && isset ($_GET['Ride']) && $_GET['Ride'] != '' && isset ($_GET['uid']) && $_GET['uid'] != '') {
             $rides = "SELECT * FROM ride WHERE rid='" . mysqli_real_escape_string($conn, $_GET['Ride']) . "'";
             $result2 = mysqli_query($conn, $rides);
             if (!$result2) {
@@ -136,7 +136,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                     border-radius: 15px;
 
                     /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                                                                                                                                                                                                                                                                                                                                              box-shadow: 3px 5px 50px -11px #313131; */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      box-shadow: 3px 5px 50px -11px #313131; */
                     visibility: hidden;
                     transform: translateX(-20px);
                     opacity: 0;
@@ -271,12 +271,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                         <?php echo $ridedetails['book_time']; ?>
                                     </p>
                                 </div>
-                                <div class="details">
-                                    <p class="booktext">Distance:</p>
-                                    <p class="booktext2">
-                                        <?php echo $ridedetails['distance']; ?>
-                                    </p>
-                                </div>
+
                                 <div class="details">
                                     <p class="booktext">Total Fare:</p>
                                     <p class="booktext2">₹
@@ -310,16 +305,41 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                 </div>
                                 <div class="details">
                                     <p class="booktext">Booking Status:</p>
-                                    <p class="booktext2"
-                                        style="color:<?php echo ($Bookdetails['status'] == 'Confirmed') ? "green" : "red"; ?>">
+                                    <?php
+                                    $status = $Bookdetails['status'];
+                                    $color = "rgb(1, 0, 32)"; // Default color
+                        
+                                    if ($status == 'Confirmed' || $status == 'Completed') {
+                                        $color = "green";
+                                    } elseif ($status == 'Pending') {
+                                        $color = "orange";
+                                    } elseif ($status == 'Cancelled') {
+                                        $color = "red";
+                                    }
+                                    ?>
 
-                                        <?php echo $Bookdetails['status']; ?>
+                                    <p class="booktext2" style="color: <?php echo $color; ?>">
+                                        <?php echo $status; ?>
                                     </p>
+
                                 </div>
                                 <div class="details">
                                     <p class="booktext">Selected Cab:</p>
                                     <p class="booktext2">
-                                        <?php echo $ridedetails['selectedCab']; ?>
+                                        <?php
+                                        $driver = false;
+                                        $cabid = $ridedetails['selectedCab'];
+                                        $cars = 'SELECT catename from cabcate where cateid=' . $cabid . '';
+                                        if ($row = mysqli_query($conn, $cars)) {
+                                            if ($cabname = mysqli_fetch_assoc($row)) {
+                                                echo $cabname['catename'];
+                                            } else {
+                                                echo '-';
+                                            }
+                                        } else {
+                                            echo '-';
+                                        }
+                                        ?>
                                     </p>
                                 </div>
                                 <div class="details">
@@ -330,12 +350,35 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                             $bookid = $Bookdetails['bookid'];
                                             $ride = "SELECT * FROM `driverrequest` WHERE bookid=$bookid";
                                             $rides = mysqli_query($conn, $ride);
-                                            $req = mysqli_fetch_assoc($rides);
-                                            $did = $req['driverID'];
-                                            $drive = "SELECT * FROM `driver` WHERE driverid=$did";
-                                            $riders = mysqli_query($conn, $drive);
-                                            $driver = mysqli_fetch_assoc($riders);
-                                            echo $req['status'];
+                                            while ($req = mysqli_fetch_assoc($rides)) {
+                                                if ($req['status'] == 'Accepted') {
+                                                    $did = $req['driverID'];
+                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                                    $riders = mysqli_query($conn, $drive);
+                                                    $driver = mysqli_fetch_assoc($riders);
+                                                    echo $req['status'];
+                                                    break;
+                                                } else if ($req['status'] == 'Pickup') {
+                                                    $did = $req['driverID'];
+                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                                    $riders = mysqli_query($conn, $drive);
+                                                    $driver = mysqli_fetch_assoc($riders);
+                                                    echo $req['status'];
+                                                    break;
+                                                } else if ($req['status'] == 'Complete') {
+                                                    $did = $req['driverID'];
+                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                                    $riders = mysqli_query($conn, $drive);
+                                                    $driver = mysqli_fetch_assoc($riders);
+                                                    echo $req['status'];
+
+                                                } else if ($req['status'] == 'pending') {
+                                                    echo "Pending";
+                                                } else {
+
+                                                }
+                                            }
+
                                         } else {
                                             echo "Pending";
                                         }
@@ -347,7 +390,9 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                     <p class="booktext2">
                                         <?php
                                         if ($Bookdetails['reqID'] != NULL) {
-                                            echo $driver["firstname"] . " " . $driver["lastname"];
+                                            if ($driver) {
+                                                echo $driver["firstname"] . " " . $driver["lastname"];
+                                            }
                                         } else {
                                             echo "-";
                                         }
@@ -359,7 +404,23 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                     <p class="booktext2">
                                         <?php
                                         if ($Bookdetails['reqID'] != NULL) {
-                                            echo $driver["phone"];
+                                            if ($driver) {
+                                                echo $driver["phone"];
+                                            }
+                                        } else {
+                                            echo "-";
+                                        }
+                                        ?>
+                                    </p>
+                                </div>
+                                <div class="details">
+                                    <p class="booktext">Driver Cab No:</p>
+                                    <p class="booktext2">
+                                        <?php
+                                        if ($Bookdetails['reqID'] != NULL) {
+                                            if ($driver) {
+                                                echo $driver["carno"];
+                                            }
                                         } else {
                                             echo "-";
                                         }
@@ -367,10 +428,8 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                     </p>
                                 </div>
 
-
-
                                 <?php
-                                if ($Bookdetails['status'] == 'Confirmed') { ?>
+                                if ($Bookdetails['status'] != 'Cancelled' && $Bookdetails['status'] != 'Completed') { ?>
                                     <div class="btns"><a href="function?cancelBooking=<?php echo $Bookdetails['bookid']; ?>"
                                             class="main-btn Mytrips" style="color:rgb(183, 1, 1); font-size: 13px;">Cancel
                                             the Trip</a></div>

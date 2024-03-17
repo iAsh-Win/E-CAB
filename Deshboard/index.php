@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
-    require("../mainDB.php");
+if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+    require ("../mainDB.php");
     try {
         // Escape the user input to prevent SQL injection
         $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
@@ -441,6 +441,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                     }
 
                 });
+
                 function truncateString(inputString, maxCharacters) {
                     if (inputString.length <= maxCharacters) {
                         return inputString;  // Return the input string if it's already within the limit
@@ -765,6 +766,22 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 map.attributionControl.remove();
 
                 function mapdata() {
+
+
+                    function haversine(lat1, lon1, lat2, lon2) {
+                        const R = 6371; // Radius of the Earth in kilometers
+                        const dLat = (lat2 - lat1) * Math.PI / 180;  // convert to radians
+                        const dLon = (lon2 - lon1) * Math.PI / 180;  // convert to radians
+                        const a =
+                            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        const distance = R * c; // Distance in kilometers
+                        return distance;
+                    }
+
+
                     console.log("map data start");
                     map.eachLayer(layer => {
                         if (layer instanceof L.Marker || layer instanceof L.Polyline) {
@@ -811,7 +828,9 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                     // Bind tooltips to markers
                     startMarker.bindTooltip(startTooltip).openTooltip();
                     endMarker.bindTooltip(endTooltip).openTooltip();
-
+                    // Calculate distance using Haversine formula
+                    var distanceInKm = (haversine(startLocation.lat, startLocation.lng, endLocation.lat, endLocation.lng)).toFixed(2);
+                    console.log('haversine Distance:', distanceInKm, 'km');
 
                     // Request route information from OpenRouteService API
                     var apiKey = '5b3ce3597851110001cf62481858258d82b749f091578b63d9c28315';
@@ -977,45 +996,9 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
                 function finalbtn() {
                     console.log(locationsObj);
-
-                    if (locationsObj.paymenttype == 'cash') {
-
-                        fetch('function.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(locationsObj)
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data == "trips") {
-                                    window.location.href = data;
-                                }
-                            })
-                    }
-                    else {
-                        fetch('function.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(locationsObj)
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data == 'done') {
-                                    pay();
-                                }
-                                // console.log(data);
-                            })
-                            .catch(error => {
-                                // Handle errors
-                                console.error('Error:', error);
-                            });
+                    nearestDriver();
 
 
-                    }
                 }
 
 
@@ -1045,13 +1028,103 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                             // If there are no errors, you can redirect or perform other actions
                             if (!data.error) {
                                 // Redirect example
-                                window.location.href = data.payment_url;
+                                // window.location.href = data.payment_url;
+                                // Replace the current URL with the payment URL
+                                window.location.replace(data.payment_url);
+
                             }
                         })
                         .catch(error => {
                             // Handle errors
                             console.error('Error making payment:', error);
                         });
+                }
+
+
+
+
+                function nearestDriver() {
+
+                    if ("geolocation" in navigator) {
+                        navigator.geolocation.getCurrentPosition(
+                            // Success callback
+                            function (position) {
+                                const latitude = position.coords.latitude;
+                                const longitude = position.coords.longitude;
+                                fetch('nearest.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        userLatitude: latitude,
+                                        userLongitude: longitude,
+                                        selectedCab: locationsObj.selectedcab, // Corrected comma and removed semicolon
+                                    })
+                                })
+
+                                    .then(res => res.text())
+                                    .then(data => {
+                                        console.log(data);
+                                        bookProcess();
+                                    })
+                                    .catch(error => {
+                                        console.error("Error fetching data:", error);
+                                    });
+                            },
+                            // Error callback
+                            function (error) {
+                                console.error("Error getting location:", error.message);
+                            }
+                        );
+                    } else {
+                        console.error("Geolocation is not supported by this browser.");
+                    }
+                }
+
+                function bookProcess() {
+                    if (locationsObj.paymenttype == 'cash') {
+
+                        fetch('function.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(locationsObj)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                if (data.assigned_drivers && data.nearest) {
+                                    const urlWithDriverId = `assigned?bookid=${data.bookid}`;
+
+                                    window.location.href = urlWithDriverId;
+                                }
+
+                            })
+                    }
+                    else {
+                        fetch('function.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(locationsObj)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data == 'done') {
+                                    pay();
+                                }
+                                // console.log(data);
+                            })
+                            .catch(error => {
+                                // Handle errors
+                                console.error('Error:', error);
+                            });
+
+
+                    }
                 }
             </script>
         </body>

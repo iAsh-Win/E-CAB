@@ -66,7 +66,7 @@
         <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-bs-toggle="dropdown"
           aria-expanded="false">
           <i class="mdi mdi-email"></i>
-          <span class="count bg-success"></span>
+          <span class="count bg-success" id='msgdot'></span>
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
           <h6 class="p-3 mb-0">Messages</h6>
@@ -108,25 +108,26 @@
         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
           data-bs-toggle="dropdown">
           <i class="mdi mdi-bell"></i>
-          <span class="count bg-danger"></span>
+          <span class="count bg-danger" id="notdot"></span>
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
           aria-labelledby="notificationDropdown">
           <h6 class="p-3 mb-0">Notifications</h6>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item preview-item">
-            <div class="preview-thumbnail">
+          <a class="dropdown-item preview-item" id="not">
+            <!-- <div class="preview-thumbnail">
               <div class="preview-icon bg-dark rounded-circle">
                 <i class="mdi mdi-calendar text-success"></i>
               </div>
             </div>
             <div class="preview-item-content">
-              <p class="preview-subject mb-1">Event today</p>
+              <p class="preview-subject mb-1"></p>
               <p class="text-muted ellipsis mb-0"> Just a reminder that you have an event today </p>
-            </div>
+            </div> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item preview-item">
+          <div class="dropdown-divider"></div>
+          <!-- <a class="dropdown-item preview-item">
             <div class="preview-thumbnail">
               <div class="preview-icon bg-dark rounded-circle">
                 <i class="mdi mdi-settings text-danger"></i>
@@ -150,7 +151,7 @@
             </div>
           </a>
           <div class="dropdown-divider"></div>
-          <p class="p-3 mb-0 text-center">See all notifications</p>
+          <p class="p-3 mb-0 text-center">See all notifications</p> -->
         </div>
       </li>
       <li class="nav-item dropdown">

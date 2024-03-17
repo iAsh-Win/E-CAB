@@ -12,8 +12,9 @@
         }
     ],
     "require": {
-        "google/apiclient": "*",
-        "razorpay/razorpay": "^2.9"
+        "google/apiclient": "*"
+     
+        
        
     }
     

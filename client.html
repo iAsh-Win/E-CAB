@@ -1,0 +1,45 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE with Conditional Data</title>
+  <style>
+    /* Optional styles for message elements based on type */
+    .info { color: blue; }
+    .warning { color: orange; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <h1>Received Messages</h1>
+  <div id="messages"></div>
+
+  <script>
+    const eventSource = new EventSource("server.php");
+
+    eventSource.onmessage = function(event) {
+      try {
+        const data = JSON.parse(event.data);
+        const message = data.message;
+        const type = data.type;
+
+        // Create element, set content and class based on clean type
+        const messageElement = document.createElement('p');
+        messageElement.textContent = message;
+        const cleanedType = type.replace(/\s/g, ''); // Remove spaces
+        if(type=='type:_info.'){
+            messageElement.classList.add(info);
+        }
+      
+        messageElement.classList.add(cleanedType);
+
+        document.getElementById('messages').appendChild(messageElement);
+      } catch (error) {
+        console.error("Error parsing JSON data:", error);
+        // Handle parsing error (e.g., display a message to the user)
+      }
+    };
+  </script>
+</body>
+</html> -->

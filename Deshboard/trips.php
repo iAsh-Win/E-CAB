@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
-    require("../mainDB.php");
+if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+    require ("../mainDB.php");
     try {
         // Escape the user input to prevent SQL injection
         $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
@@ -133,7 +133,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 border-radius: 15px;
 
                 /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                                                                                                  box-shadow: 3px 5px 50px -11px #313131; */
+                                                                                                                                                  box-shadow: 3px 5px 50px -11px #313131; */
                 visibility: hidden;
                 transform: translateX(-65px);
                 opacity: 0;
@@ -191,8 +191,8 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
             }
 
             /* .trips {
-                                                        width: 40vw;
-                                                    } */
+                                                                        width: 40vw;
+                                                                    } */
         </style>
 
         <body>
@@ -228,21 +228,32 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                                         $bookingdata = mysqli_fetch_assoc($bookings);
 
                                         if ($bookingdata) {
+                                            $status = $bookingdata['status'];
+                                            $color = "rgb(1, 0, 32)"; // Default color
+                        
+                                            if ($status == 'Confirmed' || $status == 'Completed') {
+                                                $color = "green";
+                                            } elseif ($status == 'Pending') {
+                                                $color = "orange";
+                                            } elseif ($status == 'Cancelled') {
+                                                $color = "red";
+                                            }
 
                                             echo '<div class="bookCtn trips">
-                                            <span>' . $count . '</span>
-                                            <span>' . $ride['booking_time'] . '</span>
-                                            <span>' . $ride['source'] . '</span>
-                                            <span>' . $ride['destination'] . '</span>
-                                            <span style="color: ' . (($bookingdata['status'] == 'Confirmed') ? 'green' : 'red') . '">' . $bookingdata['status'] . '</span>
-                                            <span><a href="trips-details?Booking=' . $bookingdata['bookid'] . '&Ride=' . $ride['rid'] . '&uid=' . $row['id'] . '" class="main-btn">View Details</a></span>
-                                        </div>';
+                                                        <span>' . $count . '</span>
+                                                        <span>' . $ride['booking_time'] . '</span>
+                                                        <span>' . $ride['source'] . '</span>
+                                                        <span>' . $ride['destination'] . '</span>
+                                                        <span style="color: ' . $color . '">' . $status . '</span>
+                                                        <span><a href="trips-details?Booking=' . $bookingdata['bookid'] . '&Ride=' . $ride['rid'] . '&uid=' . $row['id'] . '" class="main-btn">View Details</a></span>
+                                                    </div>';
 
                                             $count++;
                                         }
                                     }
                                 }
                                 ?>
+
                             </div>
 
                             <!-- <div class="bookCtn trips">
