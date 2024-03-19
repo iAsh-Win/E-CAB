@@ -1,7 +1,7 @@
 <?php
 // Your PHP code here
 session_start();
-if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($_SESSION["adminusername"])) {
+if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset ($_SESSION["adminusername"])) {
 
   ?>
 
@@ -15,7 +15,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
     <title>Manage Cabs</title>
     <?php
     // Your PHP code here
-    include("partials/_links.php");
+    include ("partials/_links.php");
     ?>
     <style>
       .error {
@@ -29,14 +29,14 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <!-- partial:../../partials/_navbar.html -->
       <?php
       // Your PHP code here
-      include("partials/_navbar.php");
+      include ("partials/_navbar.php");
       ?>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
         <?php
         // Your PHP code here
-        include("partials/_sidebar.php");
+        include ("partials/_sidebar.php");
         ?>
         <!-- partial -->
         <div class="main-panel">
@@ -61,44 +61,44 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                 <div class="card">
                   <div class="card-body">
 
+                    <div class="table-responsive">
+                      <table class="table table-dark table-hover card-body">
+                        <thead>
+                          <tr>
+                            <th>Sr no</th>
+                            <th>Cab Cate</th>
+                            <th>BaseFare</th>
+                            <th>Date Update</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
 
-                    <table class="table table-dark table-hover card-body">
-                      <thead>
-                        <tr>
-                          <th>Sr no</th>
-                          <th>Cab Cate</th>
-                          <th>BaseFare</th>
-                          <th>Date Update</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <?php
-                        include DB;
-                        $searchsql = "SELECT * FROM cabcate";
-                        $i = 1;
-                        $result = mysqli_query($conn, $searchsql);
+                        <tbody>
+                          <?php
+                          include DB;
+                          $searchsql = "SELECT * FROM cabcate";
+                          $i = 1;
+                          $result = mysqli_query($conn, $searchsql);
 
 
-                        while ($row = mysqli_fetch_assoc($result)) {
-                          echo '<tr>
+                          while ($row = mysqli_fetch_assoc($result)) {
+                            echo '<tr>
                                     <td>' . $i . '</td>
                                     
                                     <td>' . $row["catename"] . '</a></td>
-                                    <td>' . $row["basefare"] . '</td>
+                                    <td>₹ ' . $row["basefare"] . '</td>
                                     <td>' . $row["date-update"] . '</td>
                                     <td>
                                    <button type="button" class="btn btn-danger btn-rounded btn-sm m-1" onclick="deletecab(\'' . $row["cateid"] . '\')">Delete</button></td>
                                     </tr>';
-                          $i++;
-                        }
-                        ?>
+                            $i++;
+                          }
+                          ?>
 
-                      </tbody>
+                        </tbody>
 
-                    </table>
-
+                      </table>
+                    </div>
                     <!-- <div class="d-flex mt-4 flex-wrap">
                       <input type="hidden" name="cateupdate" value="yes">
                       <button type="submit" class="btn btn-info btn-rounded  btn-sm" onclick="">Add Cab Category</button>
@@ -139,44 +139,44 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                         <div class="card-body">
                           <h4 class="card-title">Add New Cab Category</h4>
 
-                          
-                            <div class="row">
-                              <div class="col-md-6">
-                                <div class="form-group row">
-                                  <label class="col-sm-3 col-form-label">Category Name</label>
-                                  <div class="col-sm-9">
-                                    <input type="text" name="catename" id="catename" class="form-control" required />
-                                  </div>
 
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Category Name</label>
+                                <div class="col-sm-9">
+                                  <input type="text" name="catename" id="catename" class="form-control" required />
                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="form-group row">
-                                  <label class="col-sm-3 col-form-label">Base Fare</label>
-                                  <div class="col-sm-9">
-                                    <input type="text" name="basefare" id="basefare" class="form-control" required />
-                                  </div>
 
-                                </div>
-                                <span id="errorContainer"></span>
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Base Fare</label>
                                 <div class="col-sm-9">
-                                  <input type="hidden" name="cateadd" value="yes">
-                                  <button id="add" class=" ml-5 btn btn-primary btn-rounded  btn-sm"
-                                    onclick="validateForm()">Add Category</button>
-
-
+                                  <input type="text" name="basefare" id="basefare" class="form-control" required />
                                 </div>
+
+                              </div>
+                              <span id="errorContainer"></span>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <div class="col-sm-9">
+                                <input type="hidden" name="cateadd" value="yes">
+                                <button id="add" class=" ml-5 btn btn-primary btn-rounded  btn-sm"
+                                  onclick="validateForm()">Add Category</button>
+
+
                               </div>
                             </div>
+                          </div>
 
                         </div>
 
 
-                     
+
                       </div>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
           <!-- partial:../../partials/_footer.html -->
           <?php
           // Your PHP code here
-          include("partials/_footer.php");
+          include ("partials/_footer.php");
           ?>
           <!-- partial -->
         </div>
@@ -204,7 +204,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
     </div>
     <?php
     // Your PHP code here
-    include("partials/_scripts.php");
+    include ("partials/_scripts.php");
     ?>
     <script>
       function deletecab(cateid) {

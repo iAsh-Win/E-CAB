@@ -1,7 +1,7 @@
 <?php
 // Your PHP code here
 
-if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($_SESSION["adminusername"])) {
+if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset ($_SESSION["adminusername"])) {
 
   ?>
   <nav class="sidebar sidebar-offcanvas" id="sidebar">
@@ -32,13 +32,13 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
           <i class="icon-screen-desktop menu-icon"></i>
         </a>
       </li>
-      <li class="nav-item nav-category"><span class="nav-link">CUSTOMERS</span></li>
+      <li class="nav-item nav-category"><span class="nav-link">USERS</span></li>
 
 
       <li class="nav-item">
-        <a class="nav-link" href="pages/icons/simple-line-icons.html">
-          <span class="menu-title">Manage Customers</span>
-          <i class="icon-globe menu-icon"></i>
+        <a class="nav-link" href="manage-users">
+          <span class="menu-title">Manage Users</span>
+          <i class="icon-user menu-icon"></i>
         </a>
       </li>
 
@@ -55,11 +55,19 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <li class="nav-item nav-category"><span class="nav-link">BOOKINGS</span></li>
 
       <li class="nav-item">
-        <a class="nav-link" href="pages/icons/simple-line-icons.html">
+        <a class="nav-link" href="manage-bookings">
           <span class="menu-title">Manage Bookings</span>
-          <i class="icon-globe menu-icon"></i>
+          <i class="icon-paper-plane menu-icon"></i>
         </a>
+      <li class="nav-item nav-category"><span class="nav-link">FEEDBACK</span></li>
 
+
+      <li class="nav-item">
+        <a class="nav-link" href="manage-feedback">
+          <span class="menu-title">Manage Feedback</span>
+          <i class=" icon-note menu-icon"></i>
+        </a>
+      </li>
 
       <li class="nav-item nav-category"><span class="nav-link">CABS</span></li>
       <li class="nav-item">
@@ -70,7 +78,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
             <li class="nav-item"> <a class="nav-link" href="manage-cabs">Manage Cabs</a></li>
-            <li class="nav-item"> <a class="nav-link" href="/E-cab/admin">MERCIDISC</a></li>
+           
           </ul>
         </div>
       </li>
@@ -78,7 +86,8 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
 
       <li class="nav-item pro-upgrade">
         <span class="nav-link">
-          <a class="btn btn-block px-0 btn-rounded btn-upgrade" href="/E-cab/admin/logout"> <i class="icon-badge mx-2"></i> Ashwin</a>
+          <a class="btn btn-block px-0 btn-rounded btn-upgrade" href="/E-cab/admin/logout"> <i
+              class="icon-badge mx-2"></i> Ashwin</a>
         </span>
       </li>
     </ul>

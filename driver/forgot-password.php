@@ -2,8 +2,8 @@
 session_start();
 // $_SESSION["forgot_otp"]=null;
 
-include("path.php");
-if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && isset($_SESSION["driveremail"]) && $_SESSION["driveremail"] != "") {
+include ("path.php");
+if (isset ($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && isset ($_SESSION["driveremail"]) && $_SESSION["driveremail"] != "") {
   header("location:" . BASE_URL);
 } else {
   ?>
@@ -27,7 +27,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
     <!-- Layout styles -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <link rel="shortcut icon" href="../static/pictures/favicon.png" />
     <style>
       .ptext {
         color: red;
@@ -239,8 +239,10 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
         $.ajax({
           type: "POST", // Use POST method
           url: "function.php", // Replace with your server-side endpoint
-          data: postData, // Data to be sent in the request body
+          data: postData,
+          dataType: "text", // Data to be sent in the request body
           success: function (result) {
+            console.log(result)
             if (result != "") { showDiv1(); }
             else {
               hideDiv1();
@@ -250,11 +252,13 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
                 url: "sendotp.php", // Replace with your server-side endpoint
                 data: postData, // Data to be sent in the request body
                 success: function (result1) {
+                  
                   if (result1.includes("Error")) {
 
                     document.getElementById("my").innerText = "Check Your Internet Connection.";
                   }
                   else {
+                   
                     sessionotp = parseInt(result1);
                   }
 
@@ -263,6 +267,10 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
 
             }
           },
+          error: function(xhr, status, error) {
+            console.error("Error occurred: ", status, error);
+            // Handle error here
+        }
 
         });
       }
@@ -423,7 +431,7 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
         var pass2 = document.getElementById("pass2").value;
 
         // Check for valid input lengths
-        if (pass1.length > 8 || pass2.length > 8) {
+        if (pass1.length < 8 || pass2.length < 8) {
           document.getElementById("my1").innerText = "Password must be at least 8 characters long.";
         } else if (pass1 === pass2) {
           var Data = {
@@ -436,7 +444,9 @@ if (isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true && iss
             type: "POST",
             url: "function.php",
             data: Data,
+            dataType: "text",
             success: function (result3) {
+              console.log("changed")
               if (result3 == "changed") {
                 hideall();
                 showmodi();

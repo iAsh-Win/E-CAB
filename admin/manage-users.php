@@ -1,9 +1,9 @@
 <?php
 // Your PHP code here
 session_start();
-if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset ($_SESSION["adminusername"])) {
+if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($_SESSION["adminusername"])) {
 
-  ?>
+?>
 
   <!DOCTYPE html>
   <html lang="en">
@@ -15,7 +15,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
     <title>Manage Driver</title>
     <?php
     // Your PHP code here
-    include ("partials/_links.php");
+    include("partials/_links.php");
     ?>
   </head>
 
@@ -24,20 +24,20 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
       <!-- partial:../../partials/_navbar.html -->
       <?php
       // Your PHP code here
-      include ("partials/_navbar.php");
+      include("partials/_navbar.php");
       ?>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
         <?php
         // Your PHP code here
-        include ("partials/_sidebar.php");
+        include("partials/_sidebar.php");
         ?>
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Manage Drivers</h3>
+              <h3 class="page-title">Manage Users</h3>
               <!-- <form class="search-form d-none d-md-block" action="#">
                                 <i class="icon-magnifier"></i>
                                 <input type="search" class="form-control" placeholder="Search Here" title="Search here">
@@ -45,7 +45,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="<?php echo BASE_URL ?>">Deshboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Drivers</li>
+                  <li class="breadcrumb-item active" aria-current="page">Manage Users</li>
                 </ol>
               </nav>
             </div>
@@ -55,50 +55,42 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
+
                     <div class="table-responsive">
                       <table class="table table-dark table-hover card-body">
                         <thead>
                           <tr>
                             <th>Sr no</th>
-                            <th>Driver Photo</th>
-                            <th>Driver Name</th>
-                            <th>Driver Email</th>
-                            <th>Status</th>
-                            <th>Change Status</th>
-                            <th>Action</th>
-
+                            <th>User Photo</th>
+                            <th>User Name</th>
+                            <th>User Email</th>
+                            <th>User Mobile</th>
+                            <th>Actions</th>
                           </tr>
                         </thead>
 
                         <tbody>
                           <?php
                           include DB;
-                          $searchsql = "SELECT * FROM driver";
+                          $searchsql = "SELECT * FROM users";
                           $i = 1;
                           $result = mysqli_query($conn, $searchsql);
 
                           while ($row = mysqli_fetch_assoc($result)) {
 
+                            // Check if mobile number is null, replace with hyphen ("-")
+                            $mobileNo = ($row["mobileNo"] !== null) ? $row["mobileNo"] : '-';
+
                             echo '<tr>
-                                    <td>' . $i . '</td>
-                                    <td class="py-1"><img src="' . DriverPhotos . $row["photo"] . '" alt="image" /></td>
-                                    <td>' . $row["firstname"] . " " . $row["lastname"] . '</td>
-                                    <td><a class="nav-link" href="driver-view?driver=' . $row["driverid"] . '">' . $row["email"] . '</a></td>
-                                    <td>';
-
-
-                            echo ($row["active"] == 0) ? '<div class="form-check form-check-danger"><label class="badge badge-success">Active</label></div>' : '<div class="form-check form-check-danger"><label class="badge badge-danger">deActive</label> </div>';
-
-                            echo '</td>
-                          <td> <div class="form-check form-check-danger">';
-                            echo ($row["active"] == 0) ? '<button type="button" class="btn btn-info btn-rounded  btn-sm"  onclick="deactivebtn1(\'' . $row["email"] . '\')">deActive</button>' : '<button type="button" class="btn btn-success btn-rounded  btn-sm"  onclick="activebtn1(\'' . $row["email"] . '\')">Active</button>';
-                            echo '</div>
-                                    </td>';
-
-                            echo ' <td>
-                               <div class="form-check form-check-danger">
-                                   <button type="button" class="btn btn-danger btn-rounded btn-sm m-1" onclick="deletebtn(\'' . $row["email"] . '\')">Delete</button></div></td></tr>';
-
+                                    <td class="p-3">' . $i . '</td>
+                                    <td class="py-1 p-3"><img src="/E-cab/' . trim($row['userImage']) . '" alt="image" /></td>
+                                    <td class="p-3">' . $row["name"] . '</td>
+                                    <td class="p-3">' . $row["emailID"] . '</td>
+                                    <td class="p-3">' . $mobileNo . '</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-rounded btn-sm m-1" onclick="deleteuser(\'' . $row["id"] . '\')">Delete</button>
+                                    </td>
+                                </tr>';
 
                             $i++;
                           }
@@ -106,30 +98,36 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
                         </tbody>
                       </table>
                     </div>
-                    <div class="d-flex mt-4 flex-wrap">
-                      <p class="text-muted">Showing 1 to 10 of 57 entries</p>
-                      <nav class="ml-auto">
-                        <ul class="pagination separated pagination-info">
-                          <li class="page-item"><a href="#" class="page-link"><i class="icon-arrow-left"></i></a></li>
-                          <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                          <li class="page-item"><a href="#" class="page-link">2</a></li>
-                          <li class="page-item"><a href="#" class="page-link">3</a></li>
-                          <li class="page-item"><a href="#" class="page-link">4</a></li>
-                          <li class="page-item"><a href="#" class="page-link"><i class="icon-arrow-right"></i></a></li>
-                        </ul>
-                      </nav>
-                    </div>
+
+
                   </div>
                 </div>
               </div>
+              <script>
+                function deleteuser(id) {
+                  $.ajax({
+                    type: 'POST',
+                    url: 'function.php',
+                    data: {
+                      uid: id,
+                      userdelete: 'yes',
+                      userisdelete: true
+                    },
+                    dataType: 'json',
+                    success: function(data) {
 
+                    }
+                  });
+                  location.reload();
+                }
+              </script>
 
             </div>
             <!-- content-wrapper ends -->
             <!-- partial:../../partials/_footer.html -->
             <?php
             // Your PHP code here
-            include ("partials/_footer.php");
+            include("partials/_footer.php");
             ?>
             <!-- partial -->
           </div>
@@ -139,7 +137,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
       </div>
       <?php
       // Your PHP code here
-      include ("partials/_scripts.php");
+      include("partials/_scripts.php");
       ?>
       <script>
         function deletebtn(eml) {
@@ -151,7 +149,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
             type: "POST", // Use POST method
             url: "function.php", // Replace with your server-side endpoint
             data: postData, // Data to be sent in the request body
-            success: function () {
+            success: function() {
               location.reload();
             },
           });
@@ -166,11 +164,12 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
             type: "POST", // Use POST method
             url: "function.php", // Replace with your server-side endpoint
             data: postData, // Data to be sent in the request body
-            success: function () {
+            success: function() {
               location.reload();
             },
           });
         }
+
         function activebtn1(eml) {
           postData = {
             key1: "active",
@@ -180,7 +179,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
             type: "POST", // Use POST method
             url: "function.php", // Replace with your server-side endpoint
             data: postData, // Data to be sent in the request body
-            success: function () {
+            success: function() {
               location.reload();
             },
           });
@@ -191,10 +190,9 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
   </html>
 
 
-  <?php
+<?php
   // Your PHP code here
 } else {
   header("Location:/E-cab/admin/login.php");
-
 }
 ?>

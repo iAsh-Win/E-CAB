@@ -22,9 +22,6 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
         // Handle the data (you can modify this part based on your needs)
 
-        echo '<pre>';
-        print_r($_SESSION);
-        echo '</pre>';
 
 
 

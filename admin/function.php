@@ -141,4 +141,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["catedelete"]) && isset
     
 
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["uid"]) && isset($_POST["userdelete"]) && $_POST["userdelete"] == "yes") {
+    $cateid = sanitizeInput($_POST["uid"]);
+
+    $insertsql = "DELETE FROM `users` WHERE `id`=$cateid";
+    $row = mysqli_query($conn, $insertsql);
+    
+
+}
 ?>

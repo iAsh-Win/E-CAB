@@ -192,8 +192,7 @@
               <p class="preview-subject mb-1">Log out</p>
             </div>
           </a>
-          <div class="dropdown-divider"></div>
-          <p class="p-3 mb-0 text-center">Advanced settings</p>
+      
         </div>
       </li>
     </ul>
@@ -203,3 +202,8 @@
     </button>
   </div>
 </nav>
+<style>
+  #msgdot,#notdot{
+    display: none;
+  }
+</style>

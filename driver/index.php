@@ -20,30 +20,20 @@ if (
     $name = $row["firstname"] . " " . $row["lastname"];
     $rides = "SELECT * FROM ride WHERE selectedCab='" . $row['cateid'] . "' ORDER BY book_time ASC";
     if ($result2 = mysqli_query($conn, $rides)) {
-
-      // echo '<pre>';
-      // print_r($rows);
-      // echo '</pre>';
-
       ?>
 
       <!DOCTYPE html>
       <html lang="en">
 
       <head>
-        <title>Driver Deshboard</title>
-        <?php
-        include ("partials/_links.php");
-
-        ?>
+        <title>Driver Dashboard</title>
+        <?php include ("partials/_links.php"); ?>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
+        <link rel="shortcut icon" href="../static/pictures/favicon.png" />
       </head>
 
       <body>
 
-        <!-- <body> -->
-        <!-- --------------------------------------------------------------------------- -->
         <script>
           let intervalId;
           let lastSavedLocation = null;
@@ -117,25 +107,39 @@ if (
             }
           }
         </script>
-
         <!-- --------------------------------------------------------------------------- -->
+        <script>
+          // Function to fetch and update the table content
+          function fetchAndUpdateTable() {
+            $.ajax({
+              url: 'fetch_table.php', // Path to your server-side script
+              type: 'GET',
+              success: function (data) {
+                $('#table-container').html(data); // Update table content
+                checkForNewBookings();
+              },
+              error: function (xhr, status, error) {
+                console.error('Error fetching data:', error);
+              }
+            });
+          }
+
+          // Call fetchAndUpdateTable initially to load the table content
+          fetchAndUpdateTable();
+
+          // Set an interval to fetch and update the table content every 5 seconds
+          setInterval(fetchAndUpdateTable, 5000); // Adjust interval as needed
+        </script>
+        <!-- --------------------------------------------------------------------------- -->
+
         <div class="container-scroller">
 
           <!-- partial:partials/_sidebar.html -->
-          <?php
-          include ("partials/_sidebar.php");
-
-          ?>
+          <?php include ("partials/_sidebar.php"); ?>
           <!-- partial -->
           <div class="container-fluid page-body-wrapper">
             <!-- partial:partials/_navbar.html -->
-            <?php
-            // Your PHP code here
-            include ("partials/_navbar.php");
-            ?>
-
-
-
+            <?php include ("partials/_navbar.php"); ?>
             <!-- partial -->
             <div class="main-panel">
               <div class="content-wrapper">
@@ -146,469 +150,185 @@ if (
                       <div class="card-body">
                         <h4 class="card-title">Requested Bookings</h4>
                         <div class="table-responsive" id='table-container'>
-                          <table class="table">
-                            <thead>
-                              <tr>
-
-                                <th> Requested User </th>
-                                <th> Source</th>
-                                <th> Destination</th>
-                                <th> Pickup-time</th>
-                                <th> Payment Mode </th>
-                                <th> Payment Status</th>
-                                <th> Fare</th>
-                                <th> Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <?php
-
-                              while ($ride = mysqli_fetch_assoc($result2)) {
-                                $bookings = mysqli_query($conn, "SELECT * FROM bookings WHERE rid='" . $ride['rid'] . "'");
-                                $query = "SELECT * FROM users WHERE id=" . mysqli_real_escape_string($conn, $ride['uid']);
-                                $result = mysqli_query($conn, $query);
-
-
-
-                                $user = mysqli_fetch_assoc($result);
-                                if ($bookings) {
-                                  $bookingdata = mysqli_fetch_assoc($bookings);
-
-                                  if ($bookingdata['status'] != 'Cancelled') {
-                                    $bookid = $bookingdata['bookid'];
-                                    $driverid = $row['driverid'];
-                                    // --------------------------------------
-                                    $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid";
-                                    $rides = mysqli_query($conn, $ridez);
-
-                                    while ($req = mysqli_fetch_assoc($rides)) {
-                                      if ($req['driverID'] == $driverid && $req['status'] != 'Decline') {
-                                        // =======================================================
-                                        if ($req['status'] == 'pending' && $req['driverID'] == $driverid && $req['status'] != 'Decline') {
-                                          // Check if any other driver has accepted the request
-                                          $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND (status='Accepted' OR status='Pickup' OR status='Complete') AND driverID != $driverid";
-                                          $rides_other_accepted = mysqli_query($conn, $ridez);
-                                          if (mysqli_num_rows($rides_other_accepted) == 0) {
-                                            $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND driverID=$driverid";
-                                            $rides = mysqli_query($conn, $ridez);
-                                            $req = mysqli_fetch_assoc($rides);
-                                            if ($req) {
-
-
-                                              echo '<tr>';
-                                              echo '<td class="text-white"><span class="ps-2">' . htmlspecialchars($user['emailID']) . '</span></td>';
-                                              echo '<td class="text-white">' . htmlspecialchars($ride['source']) . '</td>';
-                                              echo '<td class="text-white">' . htmlspecialchars($ride['destination']) . '</td>';
-                                              echo '<td class="text-white">' . $ride['booking_time'] . '</td>';
-                                              echo '<td class="text-white">' . $bookingdata['payment_type'] . '</td>';
-
-                                              if ($bookingdata['payment_type'] === 'online') {
-                                                $paydetails = "SELECT * FROM payments WHERE bookID='" . mysqli_real_escape_string($conn, $bookingdata['bookid']) . "'";
-                                                $result4 = mysqli_query($conn, $paydetails);
-
-                                                if (!$result4) {
-                                                  // Handle error more gracefully, log or display an error message
-                                                  throw new Exception(mysqli_error($conn));
-                                                }
-
-                                                $Paymentdetails = mysqli_fetch_assoc($result4);
-
-                                                echo '<td class="text-white">' . htmlspecialchars($Paymentdetails['status']) . '</td>';
-
-                                                mysqli_free_result($result4); // Free the result set memory
-                                              } else {
-                                                echo '<td class="text-white">-</td>';
-                                              }
-                                              echo '<td class="text-white">' . $ride['fare'] . '</td>';
-                                              if ($req['status'] == 'Accepted') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                
-                                                      <button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Decline</button>
-                                          
-                                                      </td>';
-                                              } else if ($req['status'] == 'Pickup') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
-                                      
-                                                  </td>';
-                                              } else if ($req['status'] == 'pending') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="ac-btn" class="btn btn-info btn-rounded btn-sm" onclick="Accept_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Accept</button>
-                                      
-                                                  </td>';
-                                              } 
-                                              else {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <div class="badge badge-outline-success">Completed</div>
-                                      
-                                                  </td>';
-                                              }
-
-                                              echo '</tr>';
-                                            }
-                                          }
-                                        } else if ($req['status'] != 'pending' && $req['driverID'] == $driverid && $req['status'] != 'Decline') {
-                                          $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND (status='Accepted' OR status='Pickup' OR status='Complete') AND driverID = $driverid";
-                                          $rides_other_accepted = mysqli_query($conn, $ridez);
-                                          if (mysqli_num_rows($rides_other_accepted) == 1) {
-                                            $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND driverID=$driverid";
-                                            $rides = mysqli_query($conn, $ridez);
-                                            $req = mysqli_fetch_assoc($rides);
-                                            if ($req) {
-
-
-                                              echo '<tr>';
-                                              echo '<td class="text-white"><span class="ps-2">' . htmlspecialchars($user['emailID']) . '</span></td>';
-                                              echo '<td class="text-white">' . htmlspecialchars($ride['source']) . '</td>';
-                                              echo '<td class="text-white">' . htmlspecialchars($ride['destination']) . '</td>';
-                                              echo '<td class="text-white">' . $ride['booking_time'] . '</td>';
-                                              echo '<td class="text-white">' . $bookingdata['payment_type'] . '</td>';
-
-                                              if ($bookingdata['payment_type'] === 'online') {
-                                                $paydetails = "SELECT * FROM payments WHERE bookID='" . mysqli_real_escape_string($conn, $bookingdata['bookid']) . "'";
-                                                $result4 = mysqli_query($conn, $paydetails);
-
-                                                if (!$result4) {
-                                                  // Handle error more gracefully, log or display an error message
-                                                  throw new Exception(mysqli_error($conn));
-                                                }
-
-                                                $Paymentdetails = mysqli_fetch_assoc($result4);
-
-                                                echo '<td class="text-white">' . htmlspecialchars($Paymentdetails['status']) . '</td>';
-
-                                                mysqli_free_result($result4); // Free the result set memory
-                                              } else {
-                                                echo '<td class="text-white">-</td>';
-                                              }
-                                              echo '<td class="text-white">' . $ride['fare'] . '</td>';
-                                              if ($req['status'] == 'Accepted') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                
-                                                      <button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Decline</button>
-                                          
-                                                      </td>';
-                                              } else if ($req['status'] == 'Pickup') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
-                                      
-                                                  </td>';
-                                              } else if ($req['status'] == 'pending') {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="ac-btn" class="btn btn-info btn-rounded btn-sm" onclick="Accept_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Accept</button>
-                                      
-                                                  </td>';
-                                              } else {
-                                                echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <div class="badge badge-outline-success">Completed</div>
-                                      
-                                                  </td>';
-                                              }
-
-                                              echo '</tr>';
-                                            }
-                                          }
-
-
-                                        }
-                                        // =======================================================
-                        
-
-
-
-
-
-                                      } else if ($req['driverID'] != $driverid && $req['status'] == 'Decline') {
-                                        $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND driverID=$driverid";
-                                        $rides = mysqli_query($conn, $ridez);
-                                        $req = mysqli_fetch_assoc($rides);
-                                        if ($req) {
-
-
-                                          echo '<tr>';
-                                          echo '<td class="text-white"><span class="ps-2">' . htmlspecialchars($user['emailID']) . '</span></td>';
-                                          echo '<td class="text-white">' . htmlspecialchars($ride['source']) . '</td>';
-                                          echo '<td class="text-white">' . htmlspecialchars($ride['destination']) . '</td>';
-                                          echo '<td class="text-white">' . $ride['booking_time'] . '</td>';
-                                          echo '<td class="text-white">' . $bookingdata['payment_type'] . '</td>';
-
-                                          if ($bookingdata['payment_type'] === 'online') {
-                                            $paydetails = "SELECT * FROM payments WHERE bookID='" . mysqli_real_escape_string($conn, $bookingdata['bookid']) . "'";
-                                            $result4 = mysqli_query($conn, $paydetails);
-
-                                            if (!$result4) {
-                                              // Handle error more gracefully, log or display an error message
-                                              throw new Exception(mysqli_error($conn));
-                                            }
-
-                                            $Paymentdetails = mysqli_fetch_assoc($result4);
-
-                                            echo '<td class="text-white">' . htmlspecialchars($Paymentdetails['status']) . '</td>';
-
-                                            mysqli_free_result($result4); // Free the result set memory
-                                          } else {
-                                            echo '<td class="text-white">-</td>';
-                                          }
-                                          echo '<td class="text-white">' . $ride['fare'] . '</td>';
-                                          if ($req['status'] == 'Accepted') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                        
-                                                  <button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Decline</button>
-                        
-                                                  </td>';
-                                          } else if ($req['status'] == 'Pickup') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
-                        
-                                              </td>';
-                                          } else if ($req['status'] == 'pending') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <button type="button" id="ac-btn" class="btn btn-info btn-rounded btn-sm" onclick="Accept_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Accept</button>
-                        
-                                              </td>';
-                                          }  else if ($req['status'] == 'Decline') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                            <div class="badge badge-outline-danger">Declined</div>
-                        
-                                              </td>';
-                                          }
-                                          else {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <div class="badge badge-outline-success">Completed</div>
-                        
-                                              </td>';
-                                          }
-
-                                          echo '</tr>';
-                                        }
-                                      }else if ($req['driverID'] == $driverid && $req['status'] == 'Decline'){
-                                        $ridez = "SELECT * FROM `driverrequest` WHERE bookid=$bookid AND driverID=$driverid";
-                                        $rides = mysqli_query($conn, $ridez);
-                                        $req = mysqli_fetch_assoc($rides);
-                                        if ($req) {
-
-
-                                          echo '<tr>';
-                                          echo '<td class="text-white"><span class="ps-2">' . htmlspecialchars($user['emailID']) . '</span></td>';
-                                          echo '<td class="text-white">' . htmlspecialchars($ride['source']) . '</td>';
-                                          echo '<td class="text-white">' . htmlspecialchars($ride['destination']) . '</td>';
-                                          echo '<td class="text-white">' . $ride['booking_time'] . '</td>';
-                                          echo '<td class="text-white">' . $bookingdata['payment_type'] . '</td>';
-
-                                          if ($bookingdata['payment_type'] === 'online') {
-                                            $paydetails = "SELECT * FROM payments WHERE bookID='" . mysqli_real_escape_string($conn, $bookingdata['bookid']) . "'";
-                                            $result4 = mysqli_query($conn, $paydetails);
-
-                                            if (!$result4) {
-                                              // Handle error more gracefully, log or display an error message
-                                              throw new Exception(mysqli_error($conn));
-                                            }
-
-                                            $Paymentdetails = mysqli_fetch_assoc($result4);
-
-                                            echo '<td class="text-white">' . htmlspecialchars($Paymentdetails['status']) . '</td>';
-
-                                            mysqli_free_result($result4); // Free the result set memory
-                                          } else {
-                                            echo '<td class="text-white">-</td>';
-                                          }
-                                          echo '<td class="text-white">' . $ride['fare'] . '</td>';
-                                          if ($req['status'] == 'Accepted') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                        
-                                                  <button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Decline</button>
-                        
-                                                  </td>';
-                                          } else if ($req['status'] == 'Pickup') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
-                        
-                                              </td>';
-                                          } else if ($req['status'] == 'pending') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <button type="button" id="ac-btn" class="btn btn-info btn-rounded btn-sm" onclick="Accept_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Accept</button>
-                        
-                                              </td>';
-                                          }  else if ($req['status'] == 'Decline') {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                            <div class="badge badge-outline-danger">Declined</div>
-                        
-                                              </td>';
-                                          }
-                                          else {
-                                            echo '<td id="' . $bookingdata['bookid'] . '">
-                                              <div class="badge badge-outline-success">Completed</div>
-                        
-                                              </td>';
-                                          }
-
-                                          echo '</tr>';
-                                        }
-                                      }
-
-
-
-                                    }
-                                    // ------------------------------------------
-                        
-                                  }
-
-
-                                }
-                              }
-                              ?>
-
-                            </tbody>
-
-                            
-                          </table>
-                       
-                          <!-- ------------------------- -->
-                          <!-- <button type="button" id="dc-btn" class="btn btn-info btn-rounded btn-sm" onclick="Dc_btn(\'' . $bookingdata['bookid'] . '\')">Decline</button>
-                                    <button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' . $bookingdata['bookid'] . '\')">Pickup</button>
-                                    <button type="button" id="Com-btn" class="btn btn-info btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\')">Complete</button> -->
-                          <script>
-                            function Accept_btn(val, reqID) {
-                              postData = {
-                                operation: 'AcceptBook',
-                                bookid: val,
-                                driverid: <?php echo $row['driverid']; ?>,
-                                reqID: reqID
-                              };
-
-                              $.ajax({
-                                type: "POST",
-                                url: "function.php", // Replace with your server-side endpoint
-                                data: postData,
-                                dataType: 'json', // Specify the expected data type
-                                success: function (result1) {
-                                  console.log(result1);
-
-                                  // Check if the response status is 'done' indicating success
-                                  if (result1.status === 'done') {
-                                    document.getElementById(val).innerHTML = '<button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' + val + '\', \'' + result1.reqID + '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' + val + '\', \'' + result1.reqID + '\')">Decline</button>';
-                                  } else {
-                                    console.error("Error: " + result1.message);
-                                  }
-                                },
-                                error: function (xhr, status, error) {
-                                  console.error("AJAX Request Error:", status, error);
-                                }
-                              });
-                            }
-
-
-
-                            function Pick_btn(val, reqID) {
-
-                              postData = {
-                                operation: 'PickBook',
-                                bookid: val,
-                                driverid: <?php echo $row['driverid']; ?>,
-                                reqID: reqID,
-                              };
-
-                              $.ajax({
-                                type: "POST",
-                                url: "function.php", // Replace with your server-side endpoint
-                                data: postData,
-                                dataType: 'json', // Specify the expected data type
-                                success: function (result1) {
-                                  console.log(result1);
-
-                                  // Check if the response status is 'done' indicating success
-                                  if (result1.status === 'done') {
-                                    document.getElementById(val).innerHTML = '<button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' + val + '\', \'' + reqID + '\')">Complete</button>';
-                                  } else {
-                                    console.error("Error: " + result1.message);
-                                  }
-                                },
-                                error: function (xhr, status, error) {
-                                  console.error("AJAX Request Error:", status, error);
-                                }
-                              });
-
-
-
-                            }
-
-                            function Complete_btn(val, reqID) {
-                              postData = {
-                                operation: 'CompleteRide',
-                                bookid: val,
-                                driverid: <?php echo $row['driverid']; ?>,
-                                reqID: reqID,
-                              };
-
-                              $.ajax({
-                                type: "POST",
-                                url: "function.php", // Replace with your server-side endpoint
-                                data: postData,
-                                dataType: 'json', // Specify the expected data type
-                                success: function (result1) {
-                                  console.log(result1);
-
-                                  // Check if the response status is 'done' indicating success
-                                  if (result1.status === 'done') {
-                                    document.getElementById(val).innerHTML = '<div class="badge badge-outline-success">Completed</div>';
-                                  } else {
-                                    console.error("Error: " + result1.message);
-                                  }
-                                },
-                                error: function (xhr, status, error) {
-                                  console.error("AJAX Request Error:", status, error);
-                                }
-                              });
-
-                            }
-
-                            function Dc_btn(val, reqID) {
-                              postData = {
-                                operation: 'DeclineRide',
-                                bookid: val,
-                                driverid: <?php echo $row['driverid']; ?>,
-                                reqID: reqID,
-                              };
-
-                              $.ajax({
-                                type: "POST",
-                                url: "function.php", // Replace with your server-side endpoint
-                                data: postData,
-                                dataType: 'json', // Specify the expected data type
-                                success: function (result1) {
-                                  console.log(result1);
-
-                                  // Check if the response status is 'done' indicating success
-                                  if (result1.status === 'done') {
-                                    document.getElementById(val).innerHTML = '<div class="badge badge-outline-danger">Declined</div>';
-                                  } else {
-                                    console.error("Error: " + result1.message);
-                                  }
-                                },
-                                error: function (xhr, status, error) {
-                                  console.error("AJAX Request Error:", status, error);
-                                }
-                              });
-                            }
-                          </script>
-                          <!-- ------------------ -->
+                          <!-- Table content will be dynamically updated here -->
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-
+                <!-- <div id="notification"></div> -->
               </div>
               <!-- content-wrapper ends -->
+              <script>
+                function Accept_btn(val, reqID) {
+                  postData = {
+                    operation: 'AcceptBook',
+                    bookid: val,
+                    driverid: <?php echo $row['driverid']; ?>,
+                    reqID: reqID
+                  };
+
+                  $.ajax({
+                    type: "POST",
+                    url: "function.php", // Replace with your server-side endpoint
+                    data: postData,
+                    dataType: 'json', // Specify the expected data type
+                    success: function (result1) {
+                      console.log(result1);
+
+                      // Check if the response status is 'done' indicating success
+                      if (result1.status === 'done') {
+                        document.getElementById(val).innerHTML = '<button type="button" id="pick-btn" class="btn btn-info btn-rounded btn-sm" onclick="Pick_btn(\'' + val + '\', \'' + result1.reqID + '\')">Pickup</button> &nbsp <button type="button" id="dc-btn" class="btn btn-danger btn-rounded btn-sm" onclick="Dc_btn(\'' + val + '\', \'' + result1.reqID + '\')">Decline</button>';
+                      } else {
+                        console.error("Error: " + result1.message);
+                      }
+                    },
+                    error: function (xhr, status, error) {
+                      console.error("AJAX Request Error:", status, error);
+                    }
+                  });
+                }
 
 
+
+                function Pick_btn(val, reqID) {
+
+                  postData = {
+                    operation: 'PickBook',
+                    bookid: val,
+                    driverid: <?php echo $row['driverid']; ?>,
+                    reqID: reqID,
+                  };
+
+                  $.ajax({
+                    type: "POST",
+                    url: "function.php", // Replace with your server-side endpoint
+                    data: postData,
+                    dataType: 'json', // Specify the expected data type
+                    success: function (result1) {
+                      console.log(result1);
+
+                      // Check if the response status is 'done' indicating success
+                      if (result1.status === 'done') {
+                        document.getElementById(val).innerHTML = '<button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' + val + '\', \'' + reqID + '\')">Complete</button>';
+                      } else {
+                        console.error("Error: " + result1.message);
+                      }
+                    },
+                    error: function (xhr, status, error) {
+                      console.error("AJAX Request Error:", status, error);
+                    }
+                  });
+
+
+
+                }
+
+                function Complete_btn(val, reqID) {
+                  postData = {
+                    operation: 'CompleteRide',
+                    bookid: val,
+                    driverid: <?php echo $row['driverid']; ?>,
+                    reqID: reqID,
+                  };
+
+                  $.ajax({
+                    type: "POST",
+                    url: "function.php", // Replace with your server-side endpoint
+                    data: postData,
+                    dataType: 'json', // Specify the expected data type
+                    success: function (result1) {
+                      console.log(result1);
+
+                      // Check if the response status is 'done' indicating success
+                      if (result1.status === 'done') {
+                        document.getElementById(val).innerHTML = '<div class="badge badge-outline-success">Completed</div>';
+                      } else {
+                        console.error("Error: " + result1.message);
+                      }
+                    },
+                    error: function (xhr, status, error) {
+                      console.error("AJAX Request Error:", status, error);
+                    }
+                  });
+
+                }
+
+                function Dc_btn(val, reqID) {
+                  postData = {
+                    operation: 'DeclineRide',
+                    bookid: val,
+                    driverid: <?php echo $row['driverid']; ?>,
+                    reqID: reqID,
+                  };
+
+                  $.ajax({
+                    type: "POST",
+                    url: "function.php", // Replace with your server-side endpoint
+                    data: postData,
+                    dataType: 'json', // Specify the expected data type
+                    success: function (result1) {
+                      console.log(result1);
+
+                      // Check if the response status is 'done' indicating success
+                      if (result1.status === 'done') {
+                        document.getElementById(val).innerHTML = '<div class="badge badge-outline-danger">Declined</div>';
+                      } else {
+                        console.error("Error: " + result1.message);
+                      }
+                    },
+                    error: function (xhr, status, error) {
+                      console.error("AJAX Request Error:", status, error);
+                    }
+                  });
+                }
+              </script>
+
+              <script>
+                 $('#not').hide();
+                 $('#msgdot').hide();
+                let notificationShown = false; // Variable to track if notification has been shown
+
+                function checkForNewBookings() {
+                  $.ajax({
+                    url: 'notify.php', // Path to your server-side script to check for new bookings
+                    type: 'GET',
+                    success: function (data) {
+                      if (data === 'true' && !notificationShown) {
+                        // If new booking is found and notification not shown, display the notification
+                        // $('#notification').html('<div class="alert alert-success" role="alert">New booking has arrived!</div>');
+                        // $('#notification').show(); // Show the notification
+                        $('#notdot').show();
+                        $('#not').html('<div class="preview-thumbnail">' +
+                          '<div class="preview-icon bg-dark rounded-circle">' +
+                          '<i class="mdi mdi-calendar text-success"></i>' +
+                          '</div>' +
+                          '</div>' +
+                          '<div class="preview-item-content">' +
+                          '<p class="preview-subject mb-1">New booking has arrived!</p>' +
+                          '<p class="text-muted ellipsis mb-0"></p>' +
+                          '</div>');
+
+
+                        // notificationShown = true; // Set notificationShown to true to indicate notification has been shown
+                      } else {
+                        // If no new booking or notification already shown, hide the notification
+                        // $('#notification').hide();
+                        $('#notdot').hide();
+                        $('#not').hide();
+                        $('#not').html('');
+
+                      }
+                    },
+                    error: function (xhr, status, error) {
+                      console.error('Error checking for new bookings:', error);
+                    }
+                  });
+                }
+              </script>
 
               <!-- partial:partials/_footer.html -->
-              <?php
-              include ("partials/_footer.php");
-
-              ?>
+              <?php include ("partials/_footer.php"); ?>
               <!-- partial -->
             </div>
             <!-- main-panel ends -->
@@ -616,12 +336,12 @@ if (
           <!-- page-body-wrapper ends -->
         </div>
 
-        <?php
-        include ("partials/_scripts.php"); ?>
+        <?php include ("partials/_scripts.php"); ?>
 
       </body>
 
       </html>
+
       <?php
     }
   } else {
