@@ -33,6 +33,7 @@ if (
       include("partials/_links.php");
 
       ?>
+         <link rel="shortcut icon" href="../static/pictures/favicon.png" />
       <title>Manage Profile</title>
     </head>
     <style>

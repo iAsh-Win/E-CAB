@@ -7,7 +7,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
   $totaldrivers = 0;
   $totalearnings = 0;
   $totalusers = 0;
-
+  $totalSubs = 0;
   $totalLeads = 0;
   $cashTransactions = 0;
   $onlineTransactions = 1000;
@@ -37,6 +37,14 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
   $result = mysqli_query($conn, $searchsql);
   $row = mysqli_fetch_assoc($result);
   $totalusers = $row['total'];
+
+  // Calculate total subscription amount
+  $searchsql = "SELECT SUM(sp.sprice) AS total_subscription_amount
+  FROM subscription s
+  JOIN subscription_plan sp ON s.subid = sp.id";
+  $result = mysqli_query($conn, $searchsql);
+  $row = mysqli_fetch_assoc($result);
+  $totalSubs = $row['total_subscription_amount'];
 
   // Close database connection
   mysqli_close($conn);
@@ -132,7 +140,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
                       </div>
                       <div class="col-md-6 col-xl report-inner-card">
                         <div class="inner-card-text">
-                          <span class="report-title">TOTAL EARNING</span>
+                          <span class="report-title">TOTAL FARES</span>
                           <h4>₹
                             <?php
                             echo $totalearnings;
@@ -142,6 +150,20 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
                         </div>
                         <div class="inner-card-icon bg-primary">
                           <i class="icon-diamond"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-xl report-inner-card">
+                        <div class="inner-card-text">
+                          <span class="report-title">TOTAL SUBSCRIPTIONS</span>
+                          <h4>₹
+                            <?php
+                            echo $totalSubs;
+                            ?>
+                          </h4>
+
+                        </div>
+                        <div class="inner-card-icon bg-info">
+                          <i class="icon-paper-plane"></i>
                         </div>
                       </div>
                     </div>

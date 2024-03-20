@@ -64,13 +64,48 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         </head>
+        <style>
+            .loader-wrapper {
+                flex-direction: column;
+                gap: 35px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 99999999999999;
+            }
+
+            .loader {
+                border: 8px solid #d0d0ff;
+                border-top: 8px solid rgb(4, 0, 138);
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
 
         <body>
             <nav>
                 <div class="logo">
                     <img src="static/pictures/logo2.png" class="logo-img" alt="logo">
                 </div>
-                <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div>
+                
                 <div class="user-div">
                     <div class="btns"><a href="trips" class="main-btn Mytrips">My Trips</a></div>
                     <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="userimage">
@@ -82,6 +117,13 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                     </div>
                 </div>
             </nav>
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+                <p class="car-detail" style="font-family: Montserrat; font-size: 15px; font-weight:500;">Please Wait, We are
+                    Processing...</p>
+            </div>
+
+
             <main>
                 <div class="display">
                     <div class="taskDiv">
@@ -285,6 +327,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                 </div>
             </main>
             <script>
+                document.querySelector(".loader-wrapper").style.display = "none";
                 // Get the current time
                 var cabSelected = false;
                 var paymentSelected = false;
@@ -397,7 +440,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                 }
 
                 document.getElementById("locationsvg").addEventListener('click', () => {
-
+                    document.querySelector(".loader-wrapper").style.display = "flex";
                     // Check if the browser supports Geolocation
                     if ("geolocation" in navigator) {
 
@@ -415,7 +458,8 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                     .then(response => response.json())
                                     .then(data => {
                                         const placeName = data.name;
-                                        liData("No-type", "No-id", placeName, longitude, latitude)
+                                        liData("No-type", "No-id", placeName, longitude, latitude);
+                                        document.querySelector(".loader-wrapper").style.display = "none";
 
                                     })
                                     .catch(error => {
@@ -992,6 +1036,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                 }
 
                 function finalbtn() {
+                    document.querySelector(".loader-wrapper").style.display = "flex";
                     console.log(locationsObj);
                     nearestDriver();
 
@@ -1028,6 +1073,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                 // window.location.href = data.payment_url;
                                 // Replace the current URL with the payment URL
                                 window.location.replace(data.payment_url);
+                                document.querySelector(".loader-wrapper").style.display = "none";
 
                             }
                         })
@@ -1094,6 +1140,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                 console.log(data);
                                 if (data.assigned_drivers && data.nearest) {
                                     const urlWithDriverId = `assigned?bookid=${data.bookid}`;
+                                    document.querySelector(".loader-wrapper").style.display = "none";
 
                                     window.location.href = urlWithDriverId;
                                 }

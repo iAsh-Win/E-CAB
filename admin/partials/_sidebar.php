@@ -45,12 +45,24 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
 
       <li class="nav-item nav-category"><span class="nav-link">DRIVERS</span></li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo BASE_URL ?>manage-driver">
 
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
           <span class="menu-title">Manage Drivers</span>
           <i class="icon-globe menu-icon"></i>
         </a>
+        <div class="collapse" id="ui-basic">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-driver">Manage Drivers</a></li>
+
+            <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-subscription">Manage
+                Subsriptions</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-subscription-summary">Subsriptions Summary</a></li>
+
+
+          </ul>
+        </div>
+      </li>
 
       <li class="nav-item nav-category"><span class="nav-link">BOOKINGS</span></li>
 
@@ -78,7 +90,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
             <li class="nav-item"> <a class="nav-link" href="manage-cabs">Manage Cabs</a></li>
-           
+
           </ul>
         </div>
       </li>

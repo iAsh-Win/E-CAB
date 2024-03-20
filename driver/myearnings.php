@@ -170,8 +170,8 @@ if (
                   <h3 class="page-title">My  Earnings</h3>
                   <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                      <li class="breadcrumb-item"><a href="#">My Earnings</a></li>
-                      <li class="breadcrumb-item active" aria-current="page">Deshboard</li>
+                      <li class="breadcrumb-item"><a href="index">Deshboard</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">My Earnings</li>
                     </ol>
                   </nav>
                 </div>
