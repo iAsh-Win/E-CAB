@@ -4,8 +4,8 @@ include ("path.php");
 session_start();
 
 if (
-  isset ($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true &&
-  isset ($_SESSION["driveremail"]) && $_SESSION["driveremail"] != ""
+  isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true &&
+  isset($_SESSION["driveremail"]) && $_SESSION["driveremail"] != ""
 ) {
   include inc . 'db.php';
   $driver = $_SESSION["driveremail"];
@@ -102,7 +102,8 @@ if (
                                                       </td>';
                           } else if ($req['status'] == 'Pickup') {
                             echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
+                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button> 
+                                                  <button type="button" id="map-btn" class="btn btn-primary btn-rounded btn-sm" onclick="map_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Start Map</button>
                                       
                                                   </td>';
                           } else if ($req['status'] == 'pending') {
@@ -163,7 +164,7 @@ if (
                                                       </td>';
                           } else if ($req['status'] == 'Pickup') {
                             echo '<td id="' . $bookingdata['bookid'] . '">
-                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button>
+                                                  <button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Complete</button> &nbsp <button type="button" id="map-btn" class="btn btn-primary btn-rounded btn-sm" onclick="map_btn(\'' . $bookingdata['bookid'] . '\', \'' . $req['reqID'] . '\')">Start Map</button>
                                       
                                                   </td>';
                           } else if ($req['status'] == 'pending') {

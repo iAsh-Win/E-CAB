@@ -5,7 +5,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
     require ("../mainDB.php");
     try {
 
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["bookid"]) && $_GET["bookid"] != '') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["did"]) && $_GET["did"] != '' && isset($_GET["bookid"]) && $_GET["bookid"] != '') {
             $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
 
             // Execute the query
@@ -51,6 +51,10 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"
+                    integrity="sha512-0s3pK34VJqJ/dmEPPSr9y7q+7k1TL5MRlBC3ddcMVBQRCQ9Qt4KVrvvXzKkh0S8cQKxmjz8Fs5CwqL9cvOvjsA=="
+                    crossorigin="" />
+
 
             </head>
             <style>
@@ -119,7 +123,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                     border-radius: 15px;
 
                     /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                              box-shadow: 3px 5px 50px -11px #313131; */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          box-shadow: 3px 5px 50px -11px #313131; */
                     visibility: hidden;
                     transform: translateX(-20px);
                     opacity: 0;
@@ -172,7 +176,8 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 .tripsdiv {
                     display: flex;
                     flex-direction: column;
-                    margin: auto;
+
+                    margin: auto 0;
                 }
 
                 .booktext {
@@ -215,7 +220,7 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 }
 
                 #map {
-                    height: 200px;
+                    height: 600px;
                     border-radius: 19px;
                 }
 
@@ -252,58 +257,6 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
 
             <script>
-                // Function to fetch updated data
-                // Function to fetch updated data
-                function fetchData() {
-                    $.ajax({
-                        url: 'assigned-fetch.php?bookid=<?php echo $_GET["bookid"]; ?>',
-                        type: 'GET',
-                        success: function (response) {
-                            console.log("hii " + new Date().toLocaleTimeString());
-
-
-                            // Check if response contains data
-                            if (response) {
-                                var data = JSON.parse(response);
-                                if (data && data.driverdetails) {
-
-                                    var lat = data.locationdetails.latitude;
-                                    var lon = data.locationdetails.longitude;
-
-                                    // Update HTML content with driver details
-                                    var driverdetails = data.driverdetails;
-                                    document.getElementById("driver-image").src = '../driver/' + driverdetails.photo;
-                                    document.getElementById("driver-name").innerText = driverdetails.firstname + " " + driverdetails.lastname;
-                                    document.getElementById("driver-mobile").innerText = driverdetails.phone;
-                                    document.getElementById("cab-number").innerText = driverdetails.carno;
-
-                                    // Update UI with driver details and location
-                                    document.getElementById("divz1").style.display = "none";
-                                    document.getElementById("divz2").style.display = "flex";
-                                    map(lat, lon);
-                                } else {
-                                    // Display message if no driver details available
-                                    console.log('Driver details not available');
-                                }
-                            } else {
-                                // Display message if response is empty
-                                console.log('No data received');
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            // Handle errors
-                            console.error(error);
-                        },
-                        complete: function () {
-                            // Schedule next fetch after a delay (e.g., 5 seconds)
-                            setTimeout(fetchData, 5000); // 5 seconds
-                        }
-                    });
-                }
-
-                // Call fetchData function to start fetching data
-                fetchData();
-
 
             </script>
 
@@ -326,94 +279,90 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
 
                     </div>
                 </nav>
+
+
                 <main>
                     <div class="display" style="grid-template-columns: 1fr; grid-template-rows: 1fr;">
-                        <div class="tripsdiv" id="divz1" style="align-items: center;gap: 30px;">
-                            <div class="text">
-                                <h1 class="title" style="margin: 15px 0px;">Please wait, we are finding most nearest driver to you.
-                                </h1>
-                            </div>
-                            <div id="loader" class="loader-container">
-                                <div class="loader"></div>
-                                <script>document.getElementById('loader').style.display = 'block';</script>
-                            </div>
-                            <div class="text">
-                                <div class="btns" style="margin: 15px 0px;"><a href="trips" class="main-btn Mytrips">Go to Trips</a>
-                                </div>
-                            </div>
-
+                        <div class="tripsdiv">
+                            <div class="info mapDiv" id="map"></div>
                         </div>
-
-
-                        <div class="tripsdiv" id="divz2" style="display:none;">
-                            <div class="text">
-                                <h1 class="title" style="margin: 15px 0px;">You have been assigned nearest driver</h1>
-                            </div>
-                            <div class="image"><img id="driver-image" src="" alt=""></div>
-                            <div class="info" style="margin: 20px auto;">
-                                <div class="details">
-                                    <p class="booktext">Driver Name:</p>
-                                    <p class="booktext2" id="driver-name"></p>
-                                </div>
-                                <div class="details">
-                                    <p class="booktext">Driver Mobile:</p>
-                                    <p class="booktext2" id="driver-mobile"></p>
-                                </div>
-                                <div class="details">
-                                    <p class="booktext">Cab Number:</p>
-                                    <p class="booktext2" id="cab-number"></p>
-                                </div>
-                            </div>
-
-                            <div class="info mapDiv" id="map">
-                            </div>
-                            <div class="info" style="margin: 10px auto;">
-                                <div class="btns"><a href="trips" class="main-btn Mytrips">Go to Trips</a></div>
-                            </div>
-                        </div>
-
                     </div>
                 </main>
+                <?php
+                if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["did"]) && $_GET["did"] != '' && isset($_GET["bookid"]) && $_GET["bookid"] != '') {
+                    $did = $_GET['did'];
+
+                    $latitude = 0;
+                    $longitude = 0;
+
+
+                } else {
+                    // Display a message if either 'a' or 'b' is not set
+                    echo "Sorry, You Can't Access this Page !";
+                }
+                ?>
 
                 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
                 <script>
+                    let map;
+                    let marker;
+                    const did = <?php echo json_encode($did); ?>;
 
-                    // console.log(lat)
-                    //     console.log(lon)
-                    // document.addEventListener("DOMContentLoaded", function () {
+                    // Initialize the map with the initial coordinates and zoom level
+                    function initializeMap(lat, lon) {
+                        map = L.map('map').setView([lat, lon], 15);
 
-                    //     var map = L.map('map').setView([22.5726, 88.3639], 15); // Set the initial center and zoom level
-
-                    //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    //         attribution: '&copy; OpenStreetMap contributors'
-                    //     }).addTo(map);
-                    //     map.zoomControl.remove();
-                    //     map.attributionControl.setPrefix('E=Cab'); // This sets an empty prefix
-                    //     map.attributionControl.remove();
-
-                    //     var singleLocation = L.latLng(lat, lon); // Example coordinates for Kolkata, India
-                    //     var singleMarker = L.marker(singleLocation).addTo(map);
-
-                    //     // Fit the map to the bounds of the single marker
-                    //     map.setView(singleLocation, 15);
-                    // });
-                    function map(lat, lon) {
-
-                        var map = L.map('map').setView([22.5726, 88.3639], 15); // Set the initial center and zoom level
-
+                        // Add OpenStreetMap tiles
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                             attribution: '&copy; OpenStreetMap contributors'
                         }).addTo(map);
-                        map.zoomControl.remove();
-                        map.attributionControl.setPrefix('E=Cab'); // This sets an empty prefix
-                        map.attributionControl.remove();
 
-                        var singleLocation = L.latLng(lat, lon); // Example coordinates for Kolkata, India
-                        var singleMarker = L.marker(singleLocation).addTo(map);
-
-                        // Fit the map to the bounds of the single marker
-                        map.setView(singleLocation, 15);
+                        // Add a marker at the initial coordinates
+                        marker = L.marker([lat, lon]).addTo(map);
                     }
+
+                    // Function to update driver location on the map and in the database
+                    function updateDriverLocation() {
+                        // Retrieve PHP variables from the server for 'did' and 'bookid'
+                        const did = <?php echo json_encode($_GET['did']); ?>;
+                        const bookid = <?php echo json_encode($_GET['bookid']); ?>;
+
+                        // Construct the URL for fetching the latest driver location
+                        const url = `trackDriver?did=${did}&bookid=${bookid}`;
+
+                        // Fetch the latest driver location from the server
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+
+                                if (data.latitude && data.longitude) {
+                                    const newLat = data.latitude;
+                                    const newLon = data.longitude;
+
+                                    // Update the marker's position on the map
+                                    marker.setLatLng([newLat, newLon]);
+
+                                    // Optionally, center the map on the new location (uncomment if desired)
+                                    map.setView([newLat, newLon], 65);
+                                } else {
+                                    console.error('Invalid data format: expected latitude and longitude as numbers.');
+                                }
+                            })
+                            .catch(error => {
+                                // Handle any errors that occur during the fetch request
+                                console.error('Error fetching driver location:', error);
+                            });
+
+                    }
+
+                    // Call the initializeMap function with initial coordinates
+                    const lat = <?php echo json_encode($latitude); ?>;
+                    const lon = <?php echo json_encode($longitude); ?>;
+                    initializeMap(lat, lon);
+
+                    // Start updating the driver's location dynamically every few seconds
+                    setInterval(updateDriverLocation, 5000); // Update every 5 seconds
+
                 </script>
 
 

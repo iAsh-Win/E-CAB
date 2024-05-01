@@ -1,41 +1,39 @@
 <?php
 session_start();
 
-if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
     require ("../mainDB.php");
     try {
         // Escape the user input to prevent SQL injection
         $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
-        // $id = mysqli_real_escape_string($conn, $_SESSION['id']);
 
         // Execute the query
         $query = "SELECT * FROM users WHERE emailID='$email'";
         $result = mysqli_query($conn, $query);
-
+        $query2 = "SELECT * FROM cabcate";
+        $result2 = mysqli_query($conn, $query2);
         // Check for errors in the query execution
-        if (!$result) {
+        if (!$result && !$result2) {
             throw new Exception(mysqli_error($conn));
         }
 
         // Fetch data as an associative array
         $row = mysqli_fetch_assoc($result);
-        $rides = "SELECT * FROM ride WHERE uid='" . $row['id'] . "' ORDER BY book_time ASC";
-        $result2 = mysqli_query($conn, $rides);
+
         // Handle the data (you can modify this part based on your needs)
 
-        // echo '<pre>';
-        // print_r($row);
-        // echo '</pre>';
 
 
 
         ?>
+
+        <!DOCTYPE html>
         <html lang="en">
 
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>E-CAB | Your Trips</title>
+            <title>E-CAB | Shere Your Insigts</title>
             <link rel="stylesheet" href="static/css/deshboard.css">
             <link rel="icon" type="image/png" href="static/pictures/favicon.png">
 
@@ -108,13 +106,6 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 .trips span .main-btn {
                     font-size: 10px;
                 }
-
-                .dropbox {}
-
-
-                .taskDiv {
-                    grid-row: 1;
-                }
             }
 
 
@@ -133,13 +124,12 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 border-radius: 15px;
 
                 /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                                                                                                                                                                  box-shadow: 3px 5px 50px -11px #313131; */
+          box-shadow: 3px 5px 50px -11px #313131; */
                 visibility: hidden;
-                transform: translateX(-65px);
+                transform: translateX(-20px);
                 opacity: 0;
                 transition: all 0.5s ease-in-out;
                 z-index: 10000000000000000;
-
 
             }
 
@@ -190,9 +180,15 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 margin: 0px auto;
             }
 
-            /* .trips {
-                                                                                                                        width: 40vw;
-                                                                                                                    } */
+            .mytext {
+                color: rgb(2 0 92);
+                font-family: "Montserrat";
+                /* font-family: "Poppins"; */
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+            }
         </style>
 
         <body>
@@ -200,115 +196,86 @@ if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SE
                 <div class="logo"><a href="./">
                         <img src="static/pictures/logo2.png" class="logo-img" alt="logo"></a>
                 </div>
-                <!-- <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div> -->
+
                 <div class="user-div">
 
-                    <!-- <div class="btns"><a href="trips.html" class="main-btn Mytrips">My Trips</a></div> -->
+                    <div class="btns"><a href="trips" class="main-btn Mytrips">My Trips</a></div>
 
-                    <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="">
-
+                    <img src="static/pictures/favicon.png" class="user-image" alt="">
                     <div class="dropbox">
-                        <a href="manage-profile">Manage Profile</a>
-                        <a href="feedback">Give Feedback</a>
-                        <a href="log-out">Log out</a>
+                        <a href="#">Manage Profile</a>
+                        <a href="#">Log out</a>
                     </div>
 
                 </div>
             </nav>
             <main>
                 <div class="display" style="grid-template-columns: 1fr; grid-template-rows: 1fr;">
-                    <div class="taskDiv">
-                        <div class="tripsdiv">
-                            <h1 class="title" style="margin: 30px 0px;">Recent Trips</h1>
-                            <div class="mydiv">
-                                <?php
-                                $count = 1;
-                                if (mysqli_num_rows($result2) > 0) {
-                                    while ($ride = mysqli_fetch_assoc($result2)) {
-                                        $bookings = mysqli_query($conn, "SELECT * FROM bookings WHERE rid='" . $ride['rid'] . "'");
+                    <div class="tripsdiv" id="feeddiv">
 
-                                        if ($bookings) {
+                        <div class="text">
+                            <h1 class="title" style="margin: 30px 0px;">Shere Your Feeback</h1>
+                        </div>
 
+                        <div class="mydiv">
 
-
-                                            $bookingdata = mysqli_fetch_assoc($bookings);
-
-                                            if ($bookingdata) {
-                                                $status = $bookingdata['status'];
-                                                $color = "rgb(1, 0, 32)"; // Default color
-                        
-                                                if ($status == 'Confirmed' || $status == 'Completed') {
-                                                    $color = "green";
-                                                } elseif ($status == 'Pending') {
-                                                    $color = "orange";
-                                                } elseif ($status == 'Cancelled') {
-                                                    $color = "red";
-                                                }
-
-                                                // Truncate source and destination to 20 characters
-                                                $truncated_source = substr($ride['source'], 0, 33);
-                                                $truncated_destination = substr($ride['destination'], 0, 33);
-
-                                                echo '<div class="bookCtn trips">
-                                                        <span>' . $count . '</span>
-                                                        <span>' . $ride['booking_time'] . '</span>
-                                                        <span>' . $truncated_source . '</span>
-                                                        <span>' . $truncated_destination . '</span>
-                                                        <span style="color: ' . $color . '">' . $status . '</span>
-                                                        <span><a href="trips-details?Booking=' . $bookingdata['bookid'] . '&Ride=' . $ride['rid'] . '&uid=' . $row['id'] . '" class="main-btn">View Details</a></span>
-                                                    </div>';
-
-                                                $count++;
-                                            }
-
-                                        }
-                                    }
-                                } else {
-                                    echo '<div class="mydiv">
-                                <div class="bookCtn trips" style="grid-template-columns: 1fr;">
-                                    <span>No Bookings Available, Book your Ride!</span>
-                                    
-                                </div> </div>';
-                                }
-                                ?>
-
+                            <div class="feeds" style="padding: 0px 5px;">
+                                <textarea id="feed" style="border:1px solid; border-radius: 20px; background-color: inherit; padding:10px;    width: 386px;
+                       height: 185px; resize: none;" class="inputbox mytext" cols="30" rows="10"></textarea>
                             </div>
-
-                            <!-- <div class="bookCtn trips">
-                                <span>1</span>
-                                <span>23-09-2024</span>
-                                <span>Shahibaug</span>
-                                <span>Nava Vadaj</span>
-                                <span style="color: green;">Confirmed</span>
-                                <span><a href="#" class="main-btn">View Details</a></span>
+                            <div class="btns" style="text-align: center;margin: 30px auto;">
+                                <a class="main-btn Mytrips" onclick="submitFeedback()">Submit</a>
                             </div>
-                            <div class="bookCtn trips">
-                                <span>2</span>
-                                <span>23-09-2024</span>
-                                <span>Shahibaug</span>
-                                <span>Nava Vadaj</span>
-                                <span style="color: green;">Confirmed</span>
-                                <span><a href="#" class="main-btn">View Details</a></span>
-                            </div>
-                            <div class="bookCtn trips">
-                                <span>3</span>
-                                <span>23-09-2024</span>
-                                <span>Shahibaug</span>
-                                <span>Nava Vadaj</span>
-                                <span style="color: green;">Confirmed</span>
-                                <span><a href="#" class="main-btn">View Details</a></span>
-                            </div> -->
-
-
 
                         </div>
+
+
+                    </div>
+                    <div class="tripsdiv" id="msgdiv" style="display:none;">
+                        <div class="mydiv mytext" style="margin:auto; font-size:17px">Your Valuable Insights are Submitted
+                            Successfully.
+                            <div class="btns" style="text-align: center;margin: 10px auto;"><a href="index"
+                                    class="main-btn Mytrips">Deshboard</a></div>
+                        </div>
+
                     </div>
                 </div>
             </main>
+            <script>
+                function submitFeedback() {
+                    // Retrieve feedback from textarea
+                    let feed = document.getElementById("feed").value;
+
+                    // Check if feedback is not empty
+                    if (feed.length > 0) {
+                        // Make a POST request to "function.php" endpoint
+                        fetch("function.php", {
+                            method: 'POST', // HTTP method
+                            headers: {
+                                'Content-Type': 'application/json', // Specify content type
+                                // Add any additional headers as needed
+                            },
+                            body: JSON.stringify({ 'feedback': feed }) // Convert feedback to JSON string
+                        })
+                            .then(response => response.text()) // Parse JSON response
+                            .then(data => {
+
+                                document.getElementById("feed").value = "";
+                                document.getElementById("feeddiv").style.display = "none";
+                                document.getElementById("msgdiv").style.display = "flex";
+                            })
+                            .catch(error => {
+                                console.error('Error:', error); // Log any errors that occur during the request
+                                // Handle error here
+                            });
+                    }
+                }
+            </script>
 
         </body>
 
         </html>
+
         <?php
     } catch (Exception $e) {
 

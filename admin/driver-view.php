@@ -19,7 +19,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       <title>View Driver</title>
       <?php
       // Your PHP code here
-      include("partials/_links.php");
+      include ("partials/_links.php");
       ?>
       <style>
         .image-container {
@@ -53,14 +53,14 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
         <!-- partial:../../partials/_navbar.html -->
         <?php
         // Your PHP code here
-        include("partials/_navbar.php");
+        include ("partials/_navbar.php");
         ?>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
           <!-- partial:../../partials/_sidebar.html -->
           <?php
           // Your PHP code here
-          include("partials/_sidebar.php");
+          include ("partials/_sidebar.php");
           include DB;
 
           $searchsql = "SELECT * FROM driver where driverid=$driverid";
@@ -78,6 +78,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                   echo $row["firstname"] . " " . $row["lastname"];
                   echo ($row["active"] == 0) ? '<div class="form-check form-check-danger"><label class="badge badge-success">Active</label></div>' : '<div class="form-check form-check-danger"><label class="badge badge-danger">deActive</label> </div>';
                   ?>
+
                 </h3>
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
@@ -238,6 +239,15 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
                         </div>
                       </div>
 
+                      <!-- ----- -->
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <i class="icon-compass icon-md text-success"></i>
+                          <a class="nav-link text-highlighted" href='<?php echo 'driverearnings?driver='.$row["driverid"]; ?>'>Total Earnings</a>
+                        </div>
+                      </div>
+                      <!-- ----- -->
+
 
                     </div>
                     <input type="hidden" name="Manageprofiledriver" value="yes">
@@ -254,7 +264,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
             <!-- partial:../../partials/_footer.html -->
             <?php
             // Your PHP code here
-            include("partials/_footer.php");
+            include ("partials/_footer.php");
             ?>
             <!-- partial -->
           </div>
@@ -264,7 +274,7 @@ if (isset($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset($
       </div>
       <?php
       // Your PHP code here
-      include("partials/_scripts.php");
+      include ("partials/_scripts.php");
       ?>
     </body>
 

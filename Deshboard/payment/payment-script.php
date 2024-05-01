@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($res->success) {
                             $message = ['error' => false, 'message' => $res->message, 'payment_url' => $res->data->instrumentResponse->redirectInfo->url];
                         } else {
-                            $message = ['error' => true, 'message' => $res];
+                            $message = ['error' => true, 'message1' => $res];
                         }
                     }
                 }

@@ -58,6 +58,7 @@ if (isset ($_SESSION["adminlogin"]) && $_SESSION["adminlogin"] == true && isset 
             <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-subscription">Manage
                 Subsriptions</a></li>
                 <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-subscription-summary">Subsriptions Summary</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?php echo BASE_URL ?>manage-payments">Driver Payments</a></li>
 
 
           </ul>

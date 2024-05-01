@@ -187,8 +187,8 @@
   use Google\Client;
   use Google\Service\Oauth2;
 
-  $clientID = '386892763233-aktsv8unlbdmmkqb5kqmvden71pprv3e.apps.googleusercontent.com';
-  $clientSecret = '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';
+  $clientID = '';
+  $clientSecret = '';
   $redirectUri = 'http://localhost/E-cab/function';
   $client = new Client();
   $client->setClientId($clientID);

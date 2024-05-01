@@ -45,13 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["key1"]) && isset($_POS
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';  // Your SMTP server
         $mail->SMTPAuth = true;
-        $mail->Username = 'ashwinsolanki9898@gmail.com'; // Your SMTP username
-        $mail->Password = 'qfdtdhxomshlhwdc'; // Your SMTP password
+        $mail->Username = ''; // Your SMTP username
+        $mail->Password = ''; // Your SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
         $mail->Port = 587; // TCP port to connect to
 
         // Recipients
-        $mail->setFrom('ashwinsolanki9898@gmail.com', 'E-CAB');
+        $mail->setFrom('', 'E-CAB');
         $mail->addAddress($_POST["key1"], 'Recipient1 Name');
 
         // Content

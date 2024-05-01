@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
     require ("../mainDB.php");
     try {
         // Escape the user input to prevent SQL injection
@@ -65,6 +65,10 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
         </head>
         <style>
+            .hidden {
+                display: none;
+            }
+
             .loader-wrapper {
                 flex-direction: column;
                 gap: 35px;
@@ -105,14 +109,15 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                 <div class="logo">
                     <img src="static/pictures/logo2.png" class="logo-img" alt="logo">
                 </div>
-                
+
                 <div class="user-div">
                     <div class="btns"><a href="trips" class="main-btn Mytrips">My Trips</a></div>
                     <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="userimage">
 
 
                     <div class="dropbox">
-                        <a href="#">Manage Profile</a>
+                        <a href="manage-profile">Manage Profile</a>
+                        <a href="manage-profile">Give Feedback</a>
                         <a href="log-out">Log out</a>
                     </div>
                 </div>
@@ -442,44 +447,70 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                 document.getElementById("locationsvg").addEventListener('click', () => {
                     document.querySelector(".loader-wrapper").style.display = "flex";
                     // Check if the browser supports Geolocation
-                    if ("geolocation" in navigator) {
+                    // if ("geolocation" in navigator) {
 
-                        navigator.geolocation.getCurrentPosition(
+                    //     navigator.geolocation.getCurrentPosition(
 
-                            // Success callback
-                            function (position) {
-                                document.getElementById("d1").style.visibility = "hidden";
-                                document.getElementById("d1").style.opacity = "";
-                                const latitude = position.coords.latitude;
-                                const longitude = position.coords.longitude;
-                                const apiUrl5 = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+                    //         // Success callback
+                    //         function (position) {
+                    //             document.getElementById("d1").style.visibility = "hidden";
+                    //             document.getElementById("d1").style.opacity = "";
+                    //             const latitude = position.coords.latitude;
+                    //             const longitude = position.coords.longitude;
+                    //             const apiUrl5 = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
 
-                                fetch(apiUrl5)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const placeName = data.name;
-                                        liData("No-type", "No-id", placeName, longitude, latitude);
-                                        document.querySelector(".loader-wrapper").style.display = "none";
+                    //             fetch(apiUrl5)
+                    //                 .then(response => response.json())
+                    //                 .then(data => {
+                    //                     const placeName = data.name;
+                    //                     liData("No-type", "No-id", placeName, longitude, latitude);
+                    //                     document.querySelector(".loader-wrapper").style.display = "none";
 
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching data:', error);
-                                    });
+                    //                 })
+                    //                 .catch(error => {
+                    //                     console.error('Error fetching data:', error);
+                    //                 });
 
-                                // Log the latitude and longitude to the console
-                                console.log("Latitude: " + latitude);
-                                console.log("Longitude: " + longitude);
+                    //             // Log the latitude and longitude to the console
+                    //             console.log("Latitude: " + latitude);
+                    //             console.log("Longitude: " + longitude);
 
-                            },
-                            // Error callback
-                            function (error) {
-                                console.error("Error getting location:", error.message);
-                            }
-                        );
+                    //         },
+                    //         // Error callback
+                    //         function (error) {
+                    //             console.error("Error getting location:", error.message);
+                    //         }
+                    //     );
 
+                    // } else {
+                    //     console.error("Geolocation is not supported by this browser.");
+                    // }
+
+                    if (longitude !== '' && latitude !== '') {
+
+                        // Use the reverse geocoding API
+                        const apiUrl5 = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+
+                        fetch(apiUrl5)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                let placeName = data.name;
+                                if (placeName == "") {
+                                    placeName = data.display_name;
+                                }
+                                liData("No-type", "No-id", placeName, longitude, latitude);
+                                document.querySelector(".loader-wrapper").style.display = "none";
+
+                            })
+                            .catch(error => {
+                                console.error('Error fetching data:', error);
+                                removeLoaderAndUpdateText('Unable to fetch location data. Please try again.');
+                            });
                     } else {
-                        console.error("Geolocation is not supported by this browser.");
+                        document.querySelector(".loader-wrapper").style.display = "none";
                     }
+
 
                 });
 
@@ -784,6 +815,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                     if (Object.keys(locationsObj["pickup"]).length !== 0 && Object.keys(locationsObj["dropOff"]).length !== 0 && Object.keys(locationsObj["datetime"]).length !== 0) {
                         // Enable the button
                         document.getElementById("submit").disabled = false;
+                        document.querySelector(".loader-wrapper").style.display = "flex";
                         mapdata();
 
                     } else {
@@ -957,7 +989,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                             document.getElementById("cprice").innerText = "₹ " + cabprices["compact"];
                             document.getElementById("fprice").innerText = "₹ " + cabprices["family"];
                             document.getElementById("pprice").innerText = "₹ " + cabprices["premium"];
-
+                            document.querySelector(".loader-wrapper").style.display = "none";
                             document.getElementById("div1").style.display = "none";
                             document.getElementById("div2").style.display = "flex";
                         })
@@ -1085,15 +1117,17 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
 
 
-
                 function nearestDriver() {
-
+                    // Check if geolocation is available
                     if ("geolocation" in navigator) {
+                        // Get the current position of the user
                         navigator.geolocation.getCurrentPosition(
                             // Success callback
                             function (position) {
                                 const latitude = position.coords.latitude;
                                 const longitude = position.coords.longitude;
+
+                                // Send the user's coordinates and selected cab type to the server
                                 fetch('nearest.php', {
                                     method: 'POST',
                                     headers: {
@@ -1102,20 +1136,56 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                     body: JSON.stringify({
                                         userLatitude: latitude,
                                         userLongitude: longitude,
-                                        selectedCab: locationsObj.selectedcab, // Corrected comma and removed semicolon
+                                        selectedCab: locationsObj.selectedcab, // Ensure `locationsObj` is defined and contains `selectedcab`
                                     })
                                 })
-
-                                    .then(res => res.text())
+                                    // Process the server response
+                                    .then(res => res.json())
                                     .then(data => {
                                         console.log(data);
-                                        bookProcess();
+                                        // Check for error in the response
+                                        if (data.error) {
+                                            const loaderWrapper = document.querySelector('.loader-wrapper');
+                                            loaderWrapper.querySelector('.loader').classList.add('hidden');
+                                            const paragraph = loaderWrapper.querySelector('.car-detail');
+                                            paragraph.innerText = data.error;
+
+                                            removeLoaderAndUpdateText(data.error);
+
+                                            // Create a button container div
+                                            const btnContainer = document.createElement('div');
+                                            btnContainer.classList.add('text');
+
+                                            // Create a back button element
+                                            const button = document.createElement('a');
+                                            button.onclick = function () {
+                                                document.querySelector(".loader-wrapper").style.display = "none";
+                                                restoreLoaderAndText();
+                                                const loaderWrapper = document.querySelector('.loader-wrapper');
+                                                const textElements = loaderWrapper.querySelectorAll('.text');
+                                                textElements.forEach(element => {
+                                                    element.classList.add('hidden');
+                                                });
+                                            }
+                                            button.classList.add('main-btn', 'Mytrips'); // Add classes to the button
+                                            button.innerText = 'Back'; // Set the button text
+
+                                            // Append the button to the button container
+                                            btnContainer.appendChild(button);
+
+                                            // Append the button container to the loader wrapper
+                                            loaderWrapper.appendChild(btnContainer);
+                                        } else {
+                                            // Call the function to process the booking (uncomment the next line if `bookProcess` is implemented)
+                                            bookProcess(data);
+                                        }
                                     })
+                                    // Catch and log any fetch errors
                                     .catch(error => {
                                         console.error("Error fetching data:", error);
                                     });
                             },
-                            // Error callback
+                            // Error callback for geolocation
                             function (error) {
                                 console.error("Error getting location:", error.message);
                             }
@@ -1124,6 +1194,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                         console.error("Geolocation is not supported by this browser.");
                     }
                 }
+
 
                 function bookProcess() {
                     if (locationsObj.paymenttype == 'cash') {
@@ -1171,6 +1242,114 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                     }
                 }
             </script>
+            <script>
+                let locationPermissionGranted = false; // Global variable to store location permission status
+
+                // Function to hide the loader and update the paragraph text
+                function removeLoaderAndUpdateText(txt) {
+                    const loaderWrapper = document.querySelector('.loader-wrapper');
+                    loaderWrapper.querySelector('.loader').classList.add('hidden');
+                    const paragraph = loaderWrapper.querySelector('.car-detail');
+                    paragraph.innerText = txt;
+                }
+
+                // Function to show the loader and revert the paragraph text
+                function restoreLoaderAndText() {
+                    const loaderWrapper = document.querySelector('.loader-wrapper');
+                    loaderWrapper.querySelector('.loader').classList.remove('hidden');
+
+                    const paragraph = loaderWrapper.querySelector('.car-detail');
+                    paragraph.innerText = 'Please wait, we are processing...';
+                }
+
+                // Initially set the loader to be visible
+                removeLoaderAndUpdateText('Kindly enable location and internet to proceed!');
+                document.querySelector('.loader-wrapper').style.display = 'flex';
+
+                // Function to check internet connectivity (using navigator.onLine)
+                function checkInternetConnectivity() {
+                    return navigator.onLine;
+                }
+
+                // Function to request location permission (improved for clarity)
+                function requestLocationPermission() {
+                    return new Promise((resolve, reject) => {
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(
+                                () => {
+                                    locationPermissionGranted = true;
+                                    resolve(true);
+                                },
+                                () => {
+                                    locationPermissionGranted = false;
+                                    resolve(false);
+                                },
+                                {
+                                    enableHighAccuracy: false, // Improved: Set to false for faster acquisition
+                                    timeout: 10000 // Improved: Set a reasonable timeout
+                                }
+                            );
+                        } else {
+                            resolve(false); // No geolocation support
+                        }
+                    });
+                }
+
+                let latitude, longitude;
+
+                // Function to validate permissions and get coordinates (improved)
+                async function validatePermissions() {
+                    const isConnected = checkInternetConnectivity();
+                    let hasLocationPermission;
+
+                    // Check sessionStorage for latitude and longitude
+                    latitude = sessionStorage.getItem('latitude');
+                    longitude = sessionStorage.getItem('longitude');
+
+                    if (latitude && longitude) {
+                        document.querySelector('.loader-wrapper').style.display = 'none';
+                        restoreLoaderAndText();
+
+                    } else {
+
+                        if (locationPermissionGranted) {
+                            hasLocationPermission = true;
+                        } else {
+                            hasLocationPermission = await requestLocationPermission();
+                        }
+
+                        if (isConnected && hasLocationPermission) {
+                            navigator.geolocation.getCurrentPosition(
+                                (position) => {
+                                    latitude = position.coords.latitude;
+                                    longitude = position.coords.longitude;
+                                    console.log('Latitude:', latitude);
+                                    console.log('Longitude:', longitude);
+                                    sessionStorage.setItem('latitude', latitude);
+                                    sessionStorage.setItem('longitude', longitude);
+                                    // Use the coordinates here (e.g., display on map, send to server)
+                                    // ...
+
+                                    document.querySelector('.loader-wrapper').style.display = 'none';
+                                    restoreLoaderAndText();
+                                },
+                                (error) => {
+                                    console.error('Error getting location:', error.message);
+                                    console.error('Error code:', error.code);
+                                    removeLoaderAndUpdateText('Unable to obtain location. Please try again.');
+                                }
+                            );
+                        } else {
+                            removeLoaderAndUpdateText('Kindly enable location and internet to proceed!');
+                        }
+                    }
+                }
+
+                // Run the validation function on page load
+                window.onload = validatePermissions;
+
+            </script>
+
         </body>
 
 

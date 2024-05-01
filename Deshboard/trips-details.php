@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
+if (isset($_SESSION['Logged-in-user']) && isset($_SESSION['isLoggedin']) && $_SESSION['isLoggedin'] == true) {
     require ("../mainDB.php");
     try {
         $email = mysqli_real_escape_string($conn, $_SESSION['Logged-in-user']);
@@ -15,7 +15,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
         // Fetch data as an associative array
         $row = mysqli_fetch_assoc($result);
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset ($_GET["Booking"]) && $_GET["Booking"] != '' && isset ($_GET['Ride']) && $_GET['Ride'] != '' && isset ($_GET['uid']) && $_GET['uid'] != '') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["Booking"]) && $_GET["Booking"] != '' && isset($_GET['Ride']) && $_GET['Ride'] != '' && isset($_GET['uid']) && $_GET['uid'] != '') {
             $rides = "SELECT * FROM ride WHERE rid='" . mysqli_real_escape_string($conn, $_GET['Ride']) . "'";
             $result2 = mysqli_query($conn, $rides);
             if (!$result2) {
@@ -136,7 +136,7 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                     border-radius: 15px;
 
                     /* -webkit-box-shadow: 3px 5px 50px -11px #000000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      box-shadow: 3px 5px 50px -11px #313131; */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          box-shadow: 3px 5px 50px -11px #313131; */
                     visibility: hidden;
                     transform: translateX(-20px);
                     opacity: 0;
@@ -224,17 +224,18 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
             <body>
                 <nav>
-                    <div class="logo">
-                        <img src="static/pictures/logo2.png" class="logo-img" alt="logo">
+                    <div class="logo"><a href="./">
+                            <img src="static/pictures/logo2.png" class="logo-img" alt="logo"></a>
                     </div>
-                    <div class="btns"><a href="#" class="main-btn Mytrips">My Trips</a></div>
+
                     <div class="user-div">
 
-                        <div class="btns"><a href="trips.html" class="main-btn Mytrips">My Trips</a></div>
+                        <div class="btns"><a href="trips" class="main-btn Mytrips">My Trips</a></div>
 
-                        <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="">
+                        <img src="<?php echo '../' . trim($row['userImage']); ?>" class="user-image" alt="userimage" id="pf">
                         <div class="dropbox">
-                            <a href="#">Manage Profile</a>
+                            <a href="manage-profile">Manage Profile</a>
+                            <a href="feedback">Give Feedback</a>
                             <a href="log-out">Log out</a>
                         </div>
 
@@ -250,13 +251,16 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                 <div class="details">
                                     <p class="booktext">Source:</p>
                                     <p class="booktext2">
-                                        <?php echo $ridedetails['source']; ?>
+                                        <?php
+                                         $truncated_source = substr($ridedetails['source'], 0, 33);
+                                         $truncated_destination = substr($ridedetails['destination'], 0, 33);
+                                         echo $truncated_source; ?>
                                     </p>
                                 </div>
                                 <div class="details">
                                     <p class="booktext">Destination:</p>
                                     <p class="booktext2">
-                                        <?php echo $ridedetails['destination']; ?>
+                                        <?php echo $truncated_destination; ?>
                                     </p>
                                 </div>
                                 <div class="details">
@@ -342,49 +346,91 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
                                         ?>
                                     </p>
                                 </div>
+
+
+
                                 <div class="details">
                                     <p class="booktext">Driver Status:</p>
                                     <p class="booktext2">
                                         <?php
                                         if ($Bookdetails['reqID'] != NULL) {
                                             $bookid = $Bookdetails['bookid'];
-                                            $ride = "SELECT * FROM `driverrequest` WHERE bookid=$bookid";
+                                            // Modified query to fetch the latest record based on the 'updated_at' field
+                                            $ride = "SELECT * FROM `driverrequest` WHERE bookid = $bookid ORDER BY updated DESC LIMIT 1";
                                             $rides = mysqli_query($conn, $ride);
-                                            while ($req = mysqli_fetch_assoc($rides)) {
-                                                if ($req['status'] == 'Accepted') {
-                                                    $did = $req['driverID'];
-                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
-                                                    $riders = mysqli_query($conn, $drive);
-                                                    $driver = mysqli_fetch_assoc($riders);
-                                                    echo $req['status'];
-                                                    break;
-                                                } else if ($req['status'] == 'Pickup') {
-                                                    $did = $req['driverID'];
-                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
-                                                    $riders = mysqli_query($conn, $drive);
-                                                    $driver = mysqli_fetch_assoc($riders);
-                                                    echo $req['status'];
-                                                    break;
-                                                } else if ($req['status'] == 'Complete') {
-                                                    $did = $req['driverID'];
-                                                    $drive = "SELECT * FROM `driver` WHERE driverid=$did";
-                                                    $riders = mysqli_query($conn, $drive);
-                                                    $driver = mysqli_fetch_assoc($riders);
-                                                    echo $req['status'];
 
-                                                } else if ($req['status'] == 'pending') {
-                                                    echo "Pending";
-                                                } else {
+                                            // Fetching the latest record from the query result
+                                            if ($req = mysqli_fetch_assoc($rides)) {
+                                                $did = $req['driverID'];
 
+                                                // Query to fetch the driver details
+                                                $drive = "SELECT * FROM `driver` WHERE driverid = $did";
+                                                $riders = mysqli_query($conn, $drive);
+                                                $driver = mysqli_fetch_assoc($riders);
+
+                                                // Display the status of the latest record
+                                                echo $req['status'];
+                                                if ($req['status'] == 'Pickup') {
+                                                    echo '&nbsp&nbsp<a onclick="track();" class="main-btn Mytrips" style="height: auto; cursor:pointer;">Track Cab</a>';
                                                 }
+                                            } else {
+                                                // If no record found, display "Pending"
+                                                echo "Pending";
                                             }
-
                                         } else {
+                                            // If book ID is not provided, display "Pending"
                                             echo "Pending";
                                         }
+
                                         ?>
                                     </p>
                                 </div>
+
+                                <!-- <div class="details">
+                                    <p class="booktext">Driver Status:</p>
+                                    <p class="booktext2">
+                                        <?php
+                                        // if ($Bookdetails['reqID'] != NULL) {
+                                        //     $bookid = $Bookdetails['bookid'];
+                                        //     $ride = "SELECT * FROM `driverrequest` WHERE bookid=$bookid";
+                                        //     $rides = mysqli_query($conn, $ride);
+                                        //     while ($req = mysqli_fetch_assoc($rides)) {
+                                        //         if ($req['status'] == 'Accepted') {
+                                        //             $did = $req['driverID'];
+                                        //             $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                        //             $riders = mysqli_query($conn, $drive);
+                                        //             $driver = mysqli_fetch_assoc($riders);
+                                        //             echo $req['status'];
+                                        //             break;
+                                        //         } else if ($req['status'] == 'Pickup') {
+                                        //             $did = $req['driverID'];
+                                        //             $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                        //             $riders = mysqli_query($conn, $drive);
+                                        //             $driver = mysqli_fetch_assoc($riders);
+                                        //             echo $req['status'];
+                                        //             break;
+                                        //         } else if ($req['status'] == 'Complete') {
+                                        //             $did = $req['driverID'];
+                                        //             $drive = "SELECT * FROM `driver` WHERE driverid=$did";
+                                        //             $riders = mysqli_query($conn, $drive);
+                                        //             $driver = mysqli_fetch_assoc($riders);
+                                        //             echo $req['status'];
+                            
+                                        //         } else if ($req['status'] == 'pending') {
+                                        //             echo "Pending";
+                                        //         } else {
+                                        //             echo "Declined";
+                                        //         }
+                                        //     }
+                            
+                                        // } else {
+                                        //     echo "Pending";
+                                        // }
+                                        ?>
+                                    </p>
+                                </div> -->
+
+
                                 <div class="details">
                                     <p class="booktext">Driver Name:</p>
                                     <p class="booktext2">
@@ -442,7 +488,24 @@ if (isset ($_SESSION['Logged-in-user']) && isset ($_SESSION['isLoggedin']) && $_
 
                     </div>
                 </main>
+                <script>
+                    function track() {
+                        // Retrieve the driver ID (`did`) from PHP and encode it properly for JavaScript
+                        const did = <?php echo json_encode($did ?? ''); ?>;
 
+                        // Retrieve the book ID (`bookid`) from PHP and encode it properly for JavaScript
+                        const bookid = <?php echo json_encode($Bookdetails['bookid'] ?? ''); ?>;
+
+                        // Redirect to the track page with the driver ID and book ID as query parameters
+                        if (did !== '' && bookid !== '') {
+                            window.location.href = `track?did=${did}&bookid=${bookid}`;
+                        } else {
+                            console.error('Driver ID or Book ID not provided');
+                        }
+                    }
+
+
+                </script>
             </body>
 
             </html>

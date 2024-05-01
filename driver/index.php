@@ -5,8 +5,8 @@ include ("path.php");
 session_start();
 
 if (
-  isset ($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true &&
-  isset ($_SESSION["driveremail"]) && $_SESSION["driveremail"] != ""
+  isset($_SESSION["driver_login"]) && $_SESSION["driver_login"] == true &&
+  isset($_SESSION["driveremail"]) && $_SESSION["driveremail"] != ""
 ) {
   include inc . 'db.php';
   $driver = $_SESSION["driveremail"];
@@ -227,7 +227,7 @@ if (
 
                               // Check if the response status is 'done' indicating success
                               if (result1.status === 'done') {
-                                document.getElementById(val).innerHTML = '<button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' + val + '\', \'' + reqID + '\')">Complete</button>';
+                                document.getElementById(val).innerHTML = '<button type="button" id="com-btn" class="btn btn-success btn-rounded btn-sm" onclick="Complete_btn(\'' + val + '\', \'' + reqID + '\')">Complete</button> &nbsp <button type="button" id="map-btn" class="btn btn-primary btn-rounded btn-sm" onclick="map_btn(\'' + val + '\', \'' + reqID + '\')">Start Map</button>';
                               } else {
                                 console.error("Error: " + result1.message);
                               }
@@ -299,6 +299,16 @@ if (
                             }
                           });
                         }
+
+
+                        function map_btn(a, b) {
+                          // Construct the URL with parameters a and b
+                          var url = "map.php?a=" + encodeURIComponent(a) + "&b=" + encodeURIComponent(b);
+
+                          // Redirect the browser to the constructed URL
+                          window.location.href = url;
+                        }
+
                       </script>
 
                       <script>

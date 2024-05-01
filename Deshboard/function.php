@@ -10,10 +10,10 @@ function checkData($i)
 function hasAllValues($obj)
 {
     foreach ($obj as $value) {
-        if (is_array($value) && !empty ($value)) {
+        if (is_array($value) && !empty($value)) {
             // Check if the array has at least one element
             return true;
-        } elseif (is_object($value) && !empty (get_object_vars($value))) {
+        } elseif (is_object($value) && !empty(get_object_vars($value))) {
             // Check if the object has at least one property
             return true;
         } elseif ($value !== null && $value !== '') {
@@ -36,7 +36,7 @@ $data = json_decode($json_data, true);
 
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['paymenttype']) && hasAllValues($data)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($data['paymenttype']) && hasAllValues($data)) {
 
     // echo json_encode('data');
     if ($data['paymenttype'] == 'cash') {
@@ -47,6 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['paymenttype']) && hasA
         $fare = sanitizeInput($data['totalfare']);
         $booking_time = sanitizeInput($data['datetime']);
         $selectedCab = sanitizeInput($data['selectedcab']);
+
+        $s_long = sanitizeInput($data['pickup']['long']);
+        $s_lat = sanitizeInput($data['pickup']['lat']);
+        $d_long = sanitizeInput($data['dropOff']['long']);
+        $d_lat = sanitizeInput($data['dropOff']['lat']);
 
 
         try {
@@ -119,10 +124,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['paymenttype']) && hasA
                     // echo json_encode('trips');
                     $lastId = mysqli_insert_id($conn);
 
-                    // Check if the responseData is set in the session
+                    $stmt = $conn->prepare('INSERT INTO `ride_cord` (`s_long`, `s_lat`, `d_long`, `d_lat`, `bookid`) VALUES (?, ?, ?, ?, ?)');
+                    $stmt->bind_param('ddddd', $s_long, $s_lat, $d_long, $d_lat, $lastId);
+                    $stmt->execute();
 
                     // Check if nearest drivers are stored in the session
-                    if (isset ($_SESSION['nearestDrivers']) && is_array($_SESSION['nearestDrivers'])) {
+                    if (isset($_SESSION['nearestDrivers']) && is_array($_SESSION['nearestDrivers'])) {
 
 
                         foreach ($_SESSION['nearestDrivers'] as $nearestDriver) {
@@ -165,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['paymenttype']) && hasA
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['data']) && $data['data'] == 'fetch_price') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($data['data']) && $data['data'] == 'fetch_price') {
     $pricesql = "SELECT * FROM `cabcate`";
     $priceresult = $conn->query($pricesql);
     $prices = mysqli_fetch_all($priceresult);
@@ -173,18 +180,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset ($data['data']) && $data['data
 }
 
 
-if (isset ($_SESSION['code'])) {
+if (isset($_SESSION['code'])) {
     if ($_SESSION['code'] == 'PAYMENT_SUCCESS') {
 
         $status = $_SESSION['code'];
         // Extracting values from BookingObj
         if (
-            isset ($_SESSION['BookingObj']['user']['id']) &&
-            isset ($_SESSION['BookingObj']['pickup']['mainad']) &&
-            isset ($_SESSION['BookingObj']['dropOff']['mainad']) &&
-            isset ($_SESSION['BookingObj']['totaldistance']) &&
-            isset ($_SESSION['BookingObj']['totalfare']) &&
-            isset ($_SESSION['BookingObj']['datetime'])
+            isset($_SESSION['BookingObj']['user']['id']) &&
+            isset($_SESSION['BookingObj']['pickup']['mainad']) &&
+            isset($_SESSION['BookingObj']['dropOff']['mainad']) &&
+            isset($_SESSION['BookingObj']['totaldistance']) &&
+            isset($_SESSION['BookingObj']['totalfare']) &&
+            isset($_SESSION['BookingObj']['datetime'])
         ) {
             $bookingObj = $_SESSION['BookingObj'];
             $userId = sanitizeInput($bookingObj['user']['id']);
@@ -272,7 +279,7 @@ if (isset ($_SESSION['code'])) {
 
                             echo "Record inserted successfully";
                             // ---------------------------------------------------------------------------
-                            if (isset ($_SESSION['nearestDrivers']) && is_array($_SESSION['nearestDrivers'])) {
+                            if (isset($_SESSION['nearestDrivers']) && is_array($_SESSION['nearestDrivers'])) {
 
 
                                 foreach ($_SESSION['nearestDrivers'] as $nearestDriver) {
@@ -318,7 +325,7 @@ if (isset ($_SESSION['code'])) {
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset ($_GET["cancelBooking"]) && $_GET["cancelBooking"] != '') {
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["cancelBooking"]) && $_GET["cancelBooking"] != '') {
 
     $cancelBookingId = mysqli_real_escape_string($conn, $_GET['cancelBooking']);
     $sql2 = "UPDATE `bookings` SET `status` = 'Cancelled' WHERE bookid = '$cancelBookingId'";
@@ -329,6 +336,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset ($_GET["cancelBooking"]) && $_G
     header('location: trips');
 
 
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($data["feedback"])) {
+    $user = $_SESSION['Logged-in-user'];
+    $feedback = sanitizeInput($data["feedback"]);
+    $fd = "INSERT INTO `feedback` (`user`, `feedback`, `feedDate`) VALUES ('$user', '$feedback', NOW())";
+
+    $feed = mysqli_query($conn, $fd);
 
 }
 ?>

@@ -31,27 +31,27 @@ function sendOTP($email)
 
     try {
 
-        // $mail = new PHPMailer(true);
-        // $mail->isSMTP();
-        // $mail->Host = 'smtp.gmail.com';  // Your SMTP server
-        // $mail->SMTPAuth = true;
-        // $mail->Username = 'ashwinsolanki9898@gmail.com'; // Your SMTP username
-        // $mail->Password = 'qfdtdhxomshlhwdc'; // Your SMTP password
-        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
-        // $mail->Port = 587; // TCP port to connect to
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';  // Your SMTP server
+        $mail->SMTPAuth = true;
+        $mail->Username = ''; // Your SMTP username
+        $mail->Password = ''; // Your SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
+        $mail->Port = 587; // TCP port to connect to
 
-        // // Recipients
-        // $mail->setFrom('ashwinsolanki9898@gmail.com', 'E-CAB');
-        // $mail->addAddress($email, 'Recipient1 Name');
+        // Recipients
+        $mail->setFrom('', 'E-CAB');
+        $mail->addAddress($email, 'Recipient1 Name');
 
-        // // Content
-        // $mail->isHTML(true);
-        // $mail->Subject = 'OTP AUTHNTICATION';
-        // $mail->Body = 'Your OTP is: <b>' . $otp . ' .</b>';
-        // $mail->AltBody = 'E-CAB USER AUTHENTICATION.';
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'OTP AUTHNTICATION';
+        $mail->Body = 'Your OTP is: <b>' . $otp . ' .</b>';
+        $mail->AltBody = 'E-CAB USER AUTHENTICATION.';
 
-        // // Send the email
-        // $mail->send();
+        // Send the email
+        $mail->send();
 
         return $otp;
 
@@ -238,8 +238,8 @@ use Google\Client;
 use Google\Service\Oauth2;
 
 // Init configuration
-$clientID = '386892763233-aktsv8unlbdmmkqb5kqmvden71pprv3e.apps.googleusercontent.com';
-$clientSecret = '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';
+$clientID = '';
+$clientSecret = '';
 $redirectUri = 'http://localhost/E-cab/function';
 
 // Create Client Request to access Google API
